@@ -22,7 +22,11 @@
       }
     }
   },
-  "projects": {},
+  "projects": {
+    "nestjs-test-utilities": {
+      "tags": []
+    }
+  },
   "workspaceLayout": {
     "appsDir": "packages",
     "libsDir": "packages"

@@ -6,6 +6,7 @@
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es2015",
@@ -15,7 +16,14 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@jbiskur/nestjs-async-module": [
+        "packages/simple-async-module/src/index.ts"
+      ],
+      "@jbiskur/nestjs-test-utilities": [
+        "packages/nestjs-test-utilities/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
