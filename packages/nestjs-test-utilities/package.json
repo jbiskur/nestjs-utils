@@ -1,4 +1,7 @@
 {
   "name": "@jbiskur/nestjs-test-utilities",
-  "version": "0.3.8"
+  "version": "0.3.9",
+  "scripts": {
+    "postversion": "echo $npm_package_version"
+  }
 }
