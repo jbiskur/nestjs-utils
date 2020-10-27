@@ -15,12 +15,13 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org
+  
+      - uses: egordm/gha-yarn-node-cache@v1
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - uses: lukka/set-shell-env@v1
-        name:
         with:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -30,13 +31,13 @@ jobs:
         shell: bash
 
       - name: Test, Lint and Build Affected
-        uses: mansagroup/nrwl-nx-action@v1
+        uses: MansaGroup/nrwl-nx-action@v1.0.1
         with:
           targets: lint,test,build
           affected: "true"
 
 #      - name: Publish Affected
-#        uses: mansagroup/nrwl-nx-action@v1
+#        uses: MansaGroup/nrwl-nx-action@v1.0.1
 #        with:
 #          targets: publish
 #          affected: "true"
