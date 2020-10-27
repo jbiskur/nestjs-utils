@@ -34,9 +34,8 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn publish --new-version minor --access public"
+              "yarn publish --cwd ./dist/packages/nestjs-test-utilities --new-version \"${GITHUB_REF:11}\" --no-git-tag-version --access public"
             ],
-            "cwd": "dist/packages/nestjs-test-utilities",
             "parallel": false
           }
         }
