@@ -2,8 +2,17 @@ name: Publish
 on:
   release:
     types: [published]
-  workflow_dispatch:
 jobs:
+  debug:
+    name: Debug
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump env
+        run: env | sort
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
   publish:
     runs-on: ubuntu-latest
     strategy:
@@ -36,6 +45,6 @@ jobs:
         run: yarn nx build ${{ matrix.project }}
 
       - name: Publish affected projects
-        run: yarn nx publish ${{ matrix.project }}
+        run: yarn publish --cwd ./dist/packages/${{ matrix.project }} --new-version ${{ github.event.release.tag_name }} --no-git-tag-version --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}}
