@@ -24,7 +24,7 @@ export interface ApplicationBuilderInterface {
   build(): Promise<INestApplication>;
 }
 
-export class BaseApplicationBuilder implements ApplicationBuilderInterface {
+export class NestApplicationBuilder implements ApplicationBuilderInterface {
   private testModuleBuilder: TestModuleBuilder = new TestModuleBuilder();
   private overrideProviders: OverrideProvider[] = [];
 
@@ -54,7 +54,7 @@ export class BaseApplicationBuilder implements ApplicationBuilderInterface {
     overrideBy: (
       overrideWith: ApplicationBuilderOverrideBy
     ) => ApplicationBuilderOverrideBy
-  ): BaseApplicationBuilder {
+  ): NestApplicationBuilder {
     this.overrideProviders.push({
       type: typeOrToken,
       override: overrideBy(new ApplicationBuilderOverrideBy()),
@@ -64,7 +64,7 @@ export class BaseApplicationBuilder implements ApplicationBuilderInterface {
 
   withTestModule(
     testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
-  ): BaseApplicationBuilder {
+  ): NestApplicationBuilder {
     this.testModuleBuilder = testModuleBuilder(this.testModuleBuilder);
     return this;
   }

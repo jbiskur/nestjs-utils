@@ -1,7 +1,308 @@
 # nestjs-test-utilities
 
-This library was generated with [Nx](https://nx.dev).
+The test utilities contain a set of builders that should speed up testing using method chaining and make the tests more descriptive.
 
-## Running unit tests
+[TOC]: # "## Table of Contents"
 
-Run `nx test nestjs-test-utilities` to execute the unit tests via [Jest](https://jestjs.io).
+## Table of Contents
+- [Installation](#installation)
+- [Concepts](#concepts)
+  - [Module](#module)
+  - [Application](#application)
+  - [Server](#server)
+
+
+## Installation
+Install using npm.
+
+```npm  
+npm install --save-dev @jbiskur/nestjs-test-utilities
+```
+
+using yarn.
+```yarn  
+yarn add --dev @jbiskur/nestjs-test-utilities
+```
+
+## Usage
+
+The library provides a set of builders that can be used to test various parts of the NestJS ecosystem.
+
+### Module
+
+To facilitate the testing of a single module in isolation a module builder is provided that is a simple wrapper around the [@nestjs/testing](https://www.npmjs.com/package/@nestjs/testing).
+
+```typescript
+import { TestModuleBuilder } from "@jbiskur/nestjs-test-utilities";
+//... other imports
+
+describe("Simple Example", () => {
+  it("should be get result from example service", async () => {
+    const module = await new TestModuleBuilder()
+      .withModule(TestModuleA)
+      .build()
+      .compile();
+
+    const serviceA = module.get(TestServiceA);
+
+    expect(await serviceA.helloFromA()).toBe("hello world");
+  });
+});
+```
+
+`withModule()` can be chained after each other to import additional modules, after the `build()` method is called a normal TestingModule is returned, so methods like `overrideProvider()` can be chained before the final `compile()` command.
+
+### Application
+A more useful feature of this library is the usage of the Application Builder. This creates a full NestJS application and initializes it so that all life-cycle methods are executed. Underneath the standard [@nestjs/testing](https://www.npmjs.com/package/@nestjs/testing) library is used.
+
+```typescript
+import { INestApplication } from "@nestjs/common";
+import {
+  NestApplicationBuilder,
+} from "@jbiskur/nestjs-test-utilities";
+
+//...import services and modules
+
+describe("e2e test of module", () => {
+  // store the application in an easily accessible variable
+  let app: INestApplication;
+
+  afterEach(async () => {
+    // remember to close the application
+    await app.close();
+  });
+
+  it("module and service should be defined", async () => {
+    app = await new NestApplicationBuilder()
+      .withTestModule((builder) => builder.withModule(TestModuleA))
+      .build();
+
+    const testModuleA = app.get(TestModuleA);
+    const testServiceA = await app.resolve(TestServiceA);
+
+    expect(testModuleA).toBeDefined();
+    expect(testServiceA).toBeDefined();
+  });
+}
+```
+
+the code above ensures that the full life-cycle methods in `TestModuleA` are called.
+
+A more complete example using overrides to mock data for specific services.
+```typescript
+import { INestApplication } from "@nestjs/common";
+import {
+  NestApplicationBuilder,
+} from "@jbiskur/nestjs-test-utilities";
+
+//...import services and modules
+
+describe("Example overrides using jest Mock", () => {
+    // store the application in an easily accessible variable
+    let app: INestApplication;
+    const mockedOutput = "Hello from a mocked service";
+    let TestServiceMock: jest.Mock<TestServiceA, TestServiceA[]>;
+
+    beforeAll(() => {
+      TestServiceMock = jest
+        .fn<TestServiceA, TestServiceA[]>()
+        .mockImplementation(() => ({
+          helloFromA: () => mockedOutput,
+        }));
+    });
+
+    afterEach(async () => {
+        // remember to close the application
+        await app.close();
+    });
+    
+    it("should work to override a provider using class", async () => {
+      app = await new NestApplicationBuilder()
+        .withTestModule((builder) => builder.withModule(TestModuleA))
+        .withOverrideProvider(TestServiceA, (overrideWith) =>
+          // useFactory and useValue are also supported
+          overrideWith.useClass(TestServiceMock)
+        )
+        .build();
+
+      const sut = await app.resolve(TestServiceA);
+      expect(sut.helloFromA()).toBe(mockedOutput);
+    });
+}
+```
+
+A powerful way to simplify the testing in your apps or libraries, especially in a mono-repo configuration, is to extend the application builder to configure certain modules with a single method call for generic features such as database connections, graphql setup and loggers, as the example below illustrates.
+
+```typescript
+import { GraphQLModule } from '@nestjs/graphql';
+//...import logger
+//...import typeorm
+
+// first you extend the builder by implementing the NestApplicationBuilderInterface<Builder>
+class ExtendedNestApplicationBuilder implements NestApplicationBuilderInterface<ExtendedNestApplicationBuilder> {
+  private baseBuilder: NestApplicationBuilder = new NestApplicationBuilder();
+
+  withGraphQLModule(): ExtendedNestApplicationBuilder {
+    this.withTestModule((builder) =>
+      builder.withModule(GraphQLModule.registerAsync({autoSchemaFile:true}))
+    );
+    return this;
+  }
+
+  withSomeLoggingModule(): ExtendedNestApplicationBuilder {
+    this.withTestModule((builder) =>
+      builder.withModule(/* ...registerAsync, forRoot etc.. */)
+    );
+    return this;
+  }
+  
+  withTypeORMConnection(): ExtendedNestApplicationBuilder {
+    this.withTestModule((builder) =>
+      builder.withModule(/* ...fx sql-lite in-memory database */)
+    );
+    return this;
+  }
+
+  withTestModule(
+    testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
+  ): ExtendedNestApplicationBuilder {
+    this.baseBuilder.withTestModule(testModuleBuilder);
+    return this;
+  }
+
+  async build(): Promise<INestApplication> {
+    return this.baseBuilder.build();
+  }
+
+  withOverrideProvider<T>(
+    typeOrToken: T,
+    overrideBy: (
+      overrideWith: ApplicationBuilderOverrideBy
+    ) => ApplicationBuilderOverrideBy
+  ): ExtendedNestApplicationBuilder {
+    this.baseBuilder.withOverrideProvider(typeOrToken, overrideBy);
+    return this;
+  }
+}
+```
+
+this can then be use like the normal builder, but with the added functionality.
+
+```typescript
+it("should work to extend the builder", async () => {
+  app = await new ExtendedNestApplicationBuilder()
+    .withTestModule((builder) => builder.withModule(TestModuleB))
+    .withGraphQLModule()
+    .withSomeLoggingModule()
+    .withTypeORMConnection()
+    .build();
+
+  const graphqlModule = await app.get(GraphQLModule);
+  const serviceB = await app.resolve(TestServiceB);
+
+  expect(graphqlModule).toBeDefined();
+  expect(serviceB.helloFromB()).toBe("hello world");
+});
+```
+
+this way the tests are setup consistently throughout the test suite.
+
+### Server
+The last builder that is provided is a way to wrap the application builder in an instance builder. This creates a full server than can be queried on localhost.
+
+```typescript
+import fetch from "cross-fetch";
+import {
+  ApplicationInstance,
+  ApplicationInstanceBuilder,
+  NestApplicationBuilder,
+} from "@jbiskur/nestjs-test-utilities";
+import { INestApplication } from "@nestjs/common";
+
+//...import modules etc..
+
+describe("Application Server Instance", () => {
+  describe("listen on port 3000", () => {
+    let app: ApplicationInstance;
+    let instance: INestApplication;
+    const port = 3000;
+
+    beforeAll(async () => {
+      app = await new ApplicationInstanceBuilder(
+        new NestApplicationBuilder().withTestModule((builder) =>
+          builder.withModule(ModuleWithController)
+        )
+      ).build(port);
+
+      instance = app.instance;
+    });
+
+    afterAll(async () => {
+      await instance.close();
+    });
+
+    it("should respond on port", async () => {
+      const result: Response = await fetch(`http://localhost:${app.port}/`);
+      expect(app.port).toBe(expected);
+      expect(await result.text()).toBe("hello world");
+    });
+  });
+```
+
+an example with overriding providers with [moq.ts](https://www.npmjs.com/package/moq.ts) for mocking the result of a service
+
+```typescript
+import { Mock } from "moq.ts";
+
+//...setup, describe, it etc.
+const mockedResponse = "Hello from a mocked ServiceA";
+const MockedServiceA = new Mock<TestServiceA>()
+  .setup((instance) => instance.helloFromA())
+  .returns(mockedResponse);
+
+beforeAll(async () => {
+  app = await new ApplicationInstanceBuilder(
+    new NestApplicationBuilder().withTestModule((builder) =>
+      builder.withModule(ModuleWithController)
+    )
+    .withOverrideProvider(TestServiceA, (overrideWith) =>
+      overrideWith.useValue(MockedServiceA.object())
+    );
+  ).build();
+
+  instance = app.instance;
+});
+
+//... remember to close the instance
+
+it("should respond with the mocked response", async () => {
+  const result: Response = await fetch(`http://localhost:${app.port}/`);
+  expect(await result.text()).toBe(mockedResponse);
+});
+```
+
+using an extended builder this can be simplified even more if some service is constantly mocked. It can then be easy to mock generic services with a single method call.
+
+```typescript
+class ExtendedNestApplicationBuilder implements NestApplicationBuilderInterface<ExtendedNestApplicationBuilder> {
+  //... extended builder logic, implementing interface methods etc.
+  
+  withOverriddenTestServiceA(): ExtendedBuilder {
+    this.withOverrideProvider(TestServiceA, (overrideWith) =>
+      overrideWith.useValue(MockedServiceA.object())
+    );
+    return this;
+  }
+}
+
+//... in test
+beforeAll(async () => {
+  app = await new ApplicationInstanceBuilder(
+    new ExtendedBuilder()
+      .withTestModule((builder) => builder.withModule(ModuleWithController))
+      .withOverriddenTestServiceA()
+  ).build();
+
+  instance = app.instance;
+});
+```

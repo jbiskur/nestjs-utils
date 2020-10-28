@@ -5,7 +5,7 @@ import {
 } from "./application-instance.builder";
 import {
   ApplicationBuilderOverrideBy,
-  BaseApplicationBuilder,
+  NestApplicationBuilder,
   NestApplicationBuilderInterface,
 } from "../application";
 import {
@@ -27,7 +27,7 @@ describe("Application Server Instance", () => {
 
     beforeAll(async () => {
       app = await new ApplicationInstanceBuilder(
-        new BaseApplicationBuilder().withTestModule((builder) =>
+        new NestApplicationBuilder().withTestModule((builder) =>
           builder.withModule(ModuleWithController)
         )
       ).build(port);
@@ -54,7 +54,7 @@ describe("Application Server Instance", () => {
 
     class ExtendedBuilder
       implements NestApplicationBuilderInterface<ExtendedBuilder> {
-      private builder: BaseApplicationBuilder = new BaseApplicationBuilder();
+      private builder: NestApplicationBuilder = new NestApplicationBuilder();
 
       async build(): Promise<INestApplication> {
         return this.builder.build();

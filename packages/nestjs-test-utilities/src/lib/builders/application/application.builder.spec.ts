@@ -1,6 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import {
-  BaseApplicationBuilder,
+  NestApplicationBuilder,
   NestApplicationBuilderInterface,
 } from "./application.builder";
 import {
@@ -25,7 +25,7 @@ describe("Application Builder", () => {
   });
 
   it("module and service should be defined", async () => {
-    app = await new BaseApplicationBuilder()
+    app = await new NestApplicationBuilder()
       .withTestModule((builder) => builder.withModule(TestModuleA))
       .build();
 
@@ -49,7 +49,7 @@ describe("Application Builder", () => {
     });
 
     it("should work to override a provider using class", async () => {
-      app = await new BaseApplicationBuilder()
+      app = await new NestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withOverrideProvider(TestServiceA, (overrideWith) =>
           overrideWith.useClass(TestServiceMock)
@@ -61,7 +61,7 @@ describe("Application Builder", () => {
     });
 
     it("should work to override a provider using factory", async () => {
-      app = await new BaseApplicationBuilder()
+      app = await new NestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withOverrideProvider(TestServiceA, (overrideWith) =>
           overrideWith.useFactory({
@@ -75,7 +75,7 @@ describe("Application Builder", () => {
     });
 
     it("should work to override a provider using a value", async () => {
-      app = await new BaseApplicationBuilder()
+      app = await new NestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withOverrideProvider(TestServiceA, (overrideWith) =>
           overrideWith.useValue(new TestServiceMock())
@@ -99,18 +99,18 @@ describe("Application Builder", () => {
         }));
     });
 
-    class NestApplicationBuilder
-      implements NestApplicationBuilderInterface<NestApplicationBuilder> {
-      private baseBuilder: BaseApplicationBuilder = new BaseApplicationBuilder();
+    class ExtendedNestApplicationBuilder
+      implements NestApplicationBuilderInterface<ExtendedNestApplicationBuilder> {
+      private baseBuilder: NestApplicationBuilder = new NestApplicationBuilder();
 
-      withExtendedModuleA(): NestApplicationBuilder {
+      withExtendedModuleA(): ExtendedNestApplicationBuilder {
         this.baseBuilder.withTestModule((builder) =>
           builder.withModule(ExtendedModule)
         );
         return this;
       }
 
-      withSomeCentralModule(): NestApplicationBuilder {
+      withSomeCentralModule(): ExtendedNestApplicationBuilder {
         this.baseBuilder.withTestModule((builder) =>
           builder.withModule(TestModuleB)
         );
@@ -119,7 +119,7 @@ describe("Application Builder", () => {
 
       withTestModule(
         testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
-      ): NestApplicationBuilder {
+      ): ExtendedNestApplicationBuilder {
         this.baseBuilder.withTestModule(testModuleBuilder);
         return this;
       }
@@ -133,14 +133,14 @@ describe("Application Builder", () => {
         overrideBy: (
           overrideWith: ApplicationBuilderOverrideBy
         ) => ApplicationBuilderOverrideBy
-      ): NestApplicationBuilder {
+      ): ExtendedNestApplicationBuilder {
         this.baseBuilder.withOverrideProvider(typeOrToken, overrideBy);
         return this;
       }
     }
 
     it("should work to extend the builder", async () => {
-      app = await new NestApplicationBuilder()
+      app = await new ExtendedNestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withExtendedModuleA()
         .withSomeCentralModule()
@@ -155,7 +155,7 @@ describe("Application Builder", () => {
     });
 
     it("should work with overrides", async () => {
-      app = await new NestApplicationBuilder()
+      app = await new ExtendedNestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withSomeCentralModule()
         .withOverrideProvider(TestServiceB, (overrideWith) =>
