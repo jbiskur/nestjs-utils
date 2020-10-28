@@ -2,8 +2,8 @@
   "name": "nestjs-utils",
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/jbiskur/nestjs-utils.git"
+    "type": "git",
+    "url": "https://github.com/jbiskur/nestjs-utils.git"
   },
   "scripts": {
     "nx": "nx",
@@ -26,7 +26,8 @@
     "update": "nx migrate latest",
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -63,11 +64,12 @@
     "jest": "26.2.2",
     "moq.ts": "^6.4.0",
     "prettier": "2.0.4",
+    "semantic-release": "^17.2.1",
     "supertest": "^5.0.0",
     "ts-jest": "26.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~6.0.0",
     "typescript": "~4.0.3"
   },
-  "version": "0.0.0"
+  "version": "0.0.0-development"
 }
