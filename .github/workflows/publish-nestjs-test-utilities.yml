@@ -6,8 +6,12 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [nestjs-test-utilities]
+
     steps:
-      - name: Checkout
+      - name: Git Checkout
         uses: actions/checkout@v2
 
       - name: Setup Node.js
@@ -23,15 +27,15 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Linting affected projects
-        run: yarn nx affected --target=lint
+        run: yarn nx lint ${{ matrix.project }}
 
       - name: Testing affected projects
-        run: yarn nx affected --target=test
+        run: yarn nx test ${{ matrix.project }}
 
       - name: Building affected projects
-        run: yarn nx affected --target=build
+        run: yarn nx build ${{ matrix.project }}
 
       - name: Publish affected projects
-        run: yarn nx affected --target=publish
+        run: yarn nx publish ${{ matrix.project }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}}
