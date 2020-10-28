@@ -23,15 +23,15 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Linting affected projects
-        run: yarn nx affected --target=lint --base=main
+        run: yarn nx affected --target=lint
 
       - name: Testing affected projects
-        run: yarn nx affected --target=test --base=main
+        run: yarn nx affected --target=test
 
       - name: Building affected projects
-        run: yarn nx affected --target=build --base=main
+        run: yarn nx affected --target=build
 
       - name: Publish affected projects
-        run: yarn nx affected --target=publish --base=main
+        run: yarn nx affected --target=publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}}
