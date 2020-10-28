@@ -7,21 +7,12 @@ type OverrideProvider = {
   override: ApplicationBuilderOverrideBy;
 };
 
-export interface NestApplicationBuilderInterface<Builder> {
-  build(): Promise<INestApplication>;
-  withOverrideProvider<T>(
-    typeOrToken: T,
-    overrideBy: (
-      overrideWith: ApplicationBuilderOverrideBy
-    ) => ApplicationBuilderOverrideBy
-  ): Builder;
-  withTestModule(
-    testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
-  ): Builder;
-}
-
 export interface ApplicationBuilderInterface {
   build(): Promise<INestApplication>;
+}
+
+export interface BuilderPluginInterface {
+  run(appBuilder: NestApplicationBuilder): void;
 }
 
 export class NestApplicationBuilder implements ApplicationBuilderInterface {
@@ -54,7 +45,7 @@ export class NestApplicationBuilder implements ApplicationBuilderInterface {
     overrideBy: (
       overrideWith: ApplicationBuilderOverrideBy
     ) => ApplicationBuilderOverrideBy
-  ): NestApplicationBuilder {
+  ): this {
     this.overrideProviders.push({
       type: typeOrToken,
       override: overrideBy(new ApplicationBuilderOverrideBy()),
@@ -64,8 +55,13 @@ export class NestApplicationBuilder implements ApplicationBuilderInterface {
 
   withTestModule(
     testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
-  ): NestApplicationBuilder {
+  ): this {
     this.testModuleBuilder = testModuleBuilder(this.testModuleBuilder);
+    return this;
+  }
+
+  with<T extends BuilderPluginInterface>(plugin: { new (): T }): this {
+    new plugin().run(this);
     return this;
   }
 }

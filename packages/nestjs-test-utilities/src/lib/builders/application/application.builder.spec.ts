@@ -1,8 +1,8 @@
 import { INestApplication } from "@nestjs/common";
 import {
+  BuilderPluginInterface,
   NestApplicationBuilder,
-  NestApplicationBuilderInterface,
-} from "./application.builder";
+} from './application.builder';
 import {
   ExtendedModule,
   TestModuleA,
@@ -14,8 +14,6 @@ import {
   TestServiceA,
   TestServiceB,
 } from "../test-data/test-service.data";
-import { TestModuleBuilder } from "../module";
-import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
 
 describe("Application Builder", () => {
   let app: INestApplication;
@@ -99,42 +97,23 @@ describe("Application Builder", () => {
         }));
     });
 
-    class ExtendedNestApplicationBuilder
-      implements NestApplicationBuilderInterface<ExtendedNestApplicationBuilder> {
-      private baseBuilder: NestApplicationBuilder = new NestApplicationBuilder();
+    class GraphQL implements BuilderPluginInterface {
+      run(appBuilder: NestApplicationBuilder): void {
+        appBuilder.withTestModule(builder => builder.withModule(TestModuleB));
+      }
+    }
 
-      withExtendedModuleA(): ExtendedNestApplicationBuilder {
-        this.baseBuilder.withTestModule((builder) =>
+    class TypeORMConnection implements BuilderPluginInterface {
+      run(appBuilder: NestApplicationBuilder): void {
+        appBuilder.withTestModule(builder => builder.withModule(TestModuleB));
+      }
+    }
+
+    class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
+      withExtendedModuleA(): this {
+        this.withTestModule((builder) =>
           builder.withModule(ExtendedModule)
         );
-        return this;
-      }
-
-      withSomeCentralModule(): ExtendedNestApplicationBuilder {
-        this.baseBuilder.withTestModule((builder) =>
-          builder.withModule(TestModuleB)
-        );
-        return this;
-      }
-
-      withTestModule(
-        testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
-      ): ExtendedNestApplicationBuilder {
-        this.baseBuilder.withTestModule(testModuleBuilder);
-        return this;
-      }
-
-      async build(): Promise<INestApplication> {
-        return this.baseBuilder.build();
-      }
-
-      withOverrideProvider<T>(
-        typeOrToken: T,
-        overrideBy: (
-          overrideWith: ApplicationBuilderOverrideBy
-        ) => ApplicationBuilderOverrideBy
-      ): ExtendedNestApplicationBuilder {
-        this.baseBuilder.withOverrideProvider(typeOrToken, overrideBy);
         return this;
       }
     }
@@ -143,7 +122,8 @@ describe("Application Builder", () => {
       app = await new ExtendedNestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withExtendedModuleA()
-        .withSomeCentralModule()
+        .with(GraphQL)
+        .with(TypeORMConnection)
         .build();
 
       const extendedService = await app.resolve(ExtendedService);
@@ -157,7 +137,7 @@ describe("Application Builder", () => {
     it("should work with overrides", async () => {
       app = await new ExtendedNestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
-        .withSomeCentralModule()
+        .with(GraphQL)
         .withOverrideProvider(TestServiceB, (overrideWith) =>
           overrideWith.useClass(TestServiceMock)
         )

@@ -4,10 +4,8 @@ import {
   ApplicationInstanceBuilder,
 } from "./application-instance.builder";
 import {
-  ApplicationBuilderOverrideBy,
   NestApplicationBuilder,
-  NestApplicationBuilderInterface,
-} from "../application";
+} from '../application';
 import {
   ModuleWithController,
   SERVICE_A_RESPONSE,
@@ -15,7 +13,6 @@ import {
 } from "../test-data";
 import { INestApplication } from "@nestjs/common";
 import { Mock } from "moq.ts";
-import { TestModuleBuilder } from "@jbiskur/nestjs-test-utilities";
 
 describe("Application Server Instance", () => {
   describe.each([
@@ -52,32 +49,8 @@ describe("Application Server Instance", () => {
       .setup((instance) => instance.helloFromA())
       .returns(mockedResponse);
 
-    class ExtendedBuilder
-      implements NestApplicationBuilderInterface<ExtendedBuilder> {
-      private builder: NestApplicationBuilder = new NestApplicationBuilder();
-
-      async build(): Promise<INestApplication> {
-        return this.builder.build();
-      }
-
-      withOverrideProvider<T>(
-        typeOrToken: T,
-        overrideBy: (
-          overrideWith: ApplicationBuilderOverrideBy
-        ) => ApplicationBuilderOverrideBy
-      ): ExtendedBuilder {
-        this.builder.withOverrideProvider(typeOrToken, overrideBy);
-        return this;
-      }
-
-      withTestModule(
-        testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
-      ): ExtendedBuilder {
-        this.builder.withTestModule(testModuleBuilder);
-        return this;
-      }
-
-      withOverriddenTestServiceA(): ExtendedBuilder {
+    class ExtendedBuilder extends NestApplicationBuilder {
+      withOverriddenTestServiceA(): this {
         this.withOverrideProvider(TestServiceA, (overrideWith) =>
           overrideWith.useValue(MockedServiceA.object())
         );
