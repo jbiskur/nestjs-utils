@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@jbiskur'
 
       - name: Added node cache
         uses: egordm/gha-yarn-node-cache@v1
@@ -33,10 +35,7 @@ jobs:
       - name: Building affected projects
         run: yarn nx build ${{ matrix.project }}
 
-      - name: Create .npmrc
-        run: echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" >> ~/.npmrc
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}}
-
       - name: Publish affected projects
         run: yarn publish --cwd ./dist/packages/${{ matrix.project }} --new-version ${{ github.event.release.tag_name }} --no-git-tag-version --access public --verbose
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
