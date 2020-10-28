@@ -1,3 +1,8 @@
 {
-  "name": "@jbiskur/nestjs-test-utilities"
+  "name": "@jbiskur/nestjs-test-utilities",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/jbiskur/nestjs-utils.git",
+    "directory": "packages/nestjs-test-utilities"
+  }
 }
