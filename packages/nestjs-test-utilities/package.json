@@ -4,5 +4,6 @@
     "type" : "git",
     "url" : "https://github.com/jbiskur/nestjs-utils.git",
     "directory": "packages/nestjs-test-utilities"
-  }
+  },
+  "license": "MIT"
 }
