@@ -1,3 +1,4 @@
+![Test](https://github.com/jbiskur/nestjs-utils/workflows/Test/badge.svg
 # NestJS Utils
 
 This project was generated using [Nx](https://nx.dev).
