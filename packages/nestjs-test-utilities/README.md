@@ -139,48 +139,25 @@ import { GraphQLModule } from '@nestjs/graphql';
 //...import typeorm
 
 // first you extend the builder by implementing the NestApplicationBuilderInterface<Builder>
-class ExtendedNestApplicationBuilder implements NestApplicationBuilderInterface<ExtendedNestApplicationBuilder> {
-  private baseBuilder: NestApplicationBuilder = new NestApplicationBuilder();
-
-  withGraphQLModule(): ExtendedNestApplicationBuilder {
+class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
+  withGraphQLModule(): this {
     this.withTestModule((builder) =>
       builder.withModule(GraphQLModule.registerAsync({autoSchemaFile:true}))
     );
     return this;
   }
 
-  withSomeLoggingModule(): ExtendedNestApplicationBuilder {
+  withSomeLoggingModule(): this {
     this.withTestModule((builder) =>
       builder.withModule(/* ...registerAsync, forRoot etc.. */)
     );
     return this;
   }
   
-  withTypeORMConnection(): ExtendedNestApplicationBuilder {
+  withTypeORMConnection(): this {
     this.withTestModule((builder) =>
       builder.withModule(/* ...fx sql-lite in-memory database */)
     );
-    return this;
-  }
-
-  withTestModule(
-    testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
-  ): ExtendedNestApplicationBuilder {
-    this.baseBuilder.withTestModule(testModuleBuilder);
-    return this;
-  }
-
-  async build(): Promise<INestApplication> {
-    return this.baseBuilder.build();
-  }
-
-  withOverrideProvider<T>(
-    typeOrToken: T,
-    overrideBy: (
-      overrideWith: ApplicationBuilderOverrideBy
-    ) => ApplicationBuilderOverrideBy
-  ): ExtendedNestApplicationBuilder {
-    this.baseBuilder.withOverrideProvider(typeOrToken, overrideBy);
     return this;
   }
 }
@@ -284,10 +261,10 @@ it("should respond with the mocked response", async () => {
 using an extended builder this can be simplified even more if some service is constantly mocked. It can then be easy to mock generic services with a single method call.
 
 ```typescript
-class ExtendedNestApplicationBuilder implements NestApplicationBuilderInterface<ExtendedNestApplicationBuilder> {
+class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
   //... extended builder logic, implementing interface methods etc.
   
-  withOverriddenTestServiceA(): ExtendedBuilder {
+  withOverriddenTestServiceA(): this {
     this.withOverrideProvider(TestServiceA, (overrideWith) =>
       overrideWith.useValue(MockedServiceA.object())
     );
@@ -298,7 +275,7 @@ class ExtendedNestApplicationBuilder implements NestApplicationBuilderInterface<
 //... in test
 beforeAll(async () => {
   app = await new ApplicationInstanceBuilder(
-    new ExtendedBuilder()
+    new ExtendedNestApplicationBuilder()
       .withTestModule((builder) => builder.withModule(ModuleWithController))
       .withOverriddenTestServiceA()
   ).build();
@@ -306,3 +283,58 @@ beforeAll(async () => {
   instance = app.instance;
 });
 ```
+
+### Plugins
+the test builder supports plugins that can be used to share common builder patterns.
+
+A plugin can be developed by extending the following interface
+```typescript
+export interface INestApplicationBuilderPlugin {
+  run(appBuilder: NestApplicationBuilder): void;
+}
+```
+
+An example graphql module plugin:
+
+```typescript
+import { GraphQLModule } from '@nestjs/graphql';
+
+class GraphQL implements INestApplicationBuilderPlugin {
+  private options: GraphQLOptions = {
+    autoSchemaFile: true
+  };
+  
+  withPlayground(): this {
+    options.playground = true;   
+    return this;
+  }
+  
+  withProduction(): this {
+    options.production = true;
+  }
+  
+  // is executed last by the Application Builder
+  run(appBuilder: NestApplicationBuilder): void {
+    appBuilder.withTestModule(builder => builder.withModule(GraphQLModule.registerAsync(this.options)));
+  }
+}
+```
+
+and using it with no options
+```typescript
+app = await new NestApplicationBuilder()
+    .withTestModule((builder) => builder.withModule(TestModuleA))
+    .with(GraphQL)
+    .build();
+```
+with options
+```typescript
+app = await new NestApplicationBuilder()
+    .withTestModule((builder) => builder.withModule(TestModuleA))
+    .with(GraphQL, builder => builder.withPlayground().withProduction())
+    .build();
+```
+
+When sharing **NestApplicationBuilderPlugins** on npm, please use the following naming convention
+
+`<name>-nestjs-builder-plugin`

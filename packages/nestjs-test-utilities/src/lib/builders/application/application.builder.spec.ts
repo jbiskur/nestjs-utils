@@ -1,6 +1,6 @@
 import { INestApplication } from "@nestjs/common";
 import {
-  BuilderPluginInterface,
+  INestApplicationBuilderPlugin,
   NestApplicationBuilder,
 } from './application.builder';
 import {
@@ -97,7 +97,7 @@ describe("Application Builder", () => {
         }));
     });
 
-    class GraphQL implements BuilderPluginInterface {
+    class GraphQL implements INestApplicationBuilderPlugin {
       run(appBuilder: NestApplicationBuilder): void {
         appBuilder.withTestModule(builder => builder.withModule(TestModuleB));
       }
@@ -107,7 +107,7 @@ describe("Application Builder", () => {
       }
     }
 
-    class TypeORMConnection implements BuilderPluginInterface {
+    class TypeORMConnection implements INestApplicationBuilderPlugin {
       run(appBuilder: NestApplicationBuilder): void {
         appBuilder.withTestModule(builder => builder.withModule(TestModuleB));
       }
