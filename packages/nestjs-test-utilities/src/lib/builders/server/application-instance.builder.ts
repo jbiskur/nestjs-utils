@@ -1,5 +1,5 @@
 import { INestApplication } from "@nestjs/common";
-import { ApplicationBuilderInterface } from "../application";
+import { NestApplicationBuilder } from '../application';
 
 export interface ApplicationInstance {
   port: number;
@@ -7,9 +7,9 @@ export interface ApplicationInstance {
 }
 
 export class ApplicationInstanceBuilder {
-  private applicationBuilder: ApplicationBuilderInterface;
+  private applicationBuilder: NestApplicationBuilder;
 
-  constructor(applicationBuilder: ApplicationBuilderInterface) {
+  constructor(applicationBuilder: NestApplicationBuilder) {
     this.applicationBuilder = applicationBuilder;
   }
 
