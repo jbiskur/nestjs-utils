@@ -31,7 +31,7 @@ The library provides a set of builders that can be used to test various parts of
 
 ### Module
 
-To facilitate the testing of a single module in isolation a module builder is provided that is a simple wrapper around the [@nestjs/testing](https://www.npmjs.com/package/@nestjs/testing).
+To facilitate the testing of a single module in isolation a module builder is provided that is a simple wrapper around the [@nestjs/testing](https://www.npmjs.com/package/@nestjs/testing) library.
 
 ```typescript
 import { TestModuleBuilder } from "@jbiskur/nestjs-test-utilities";
@@ -139,7 +139,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 //...import logger
 //...import typeorm
 
-// first you extend the builder by implementing the NestApplicationBuilderInterface<Builder>
+// first you extend the builder by extending the NestApplicationBuilder class
 class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
   withGraphQLModule(): this {
     this.withTestModule((builder) =>
@@ -263,7 +263,7 @@ using an extended builder this can be simplified even more if some service is co
 
 ```typescript
 class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
-  //... extended builder logic, implementing interface methods etc.
+  // ...other extended methods
   
   withOverriddenTestServiceA(): this {
     this.withOverrideProvider(TestServiceA, (overrideWith) =>
@@ -332,7 +332,7 @@ with options
 ```typescript
 app = await new NestApplicationBuilder()
     .withTestModule((builder) => builder.withModule(TestModuleA))
-    .with(GraphQL, builder => builder.withPlayground().withProduction())
+    .with(GraphQL, (plugin) => plugin.withPlayground().withProduction())
     .build();
 ```
 
