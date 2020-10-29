@@ -1,14 +1,19 @@
 name: Test
 on:
   push:
-    branches:
-    - main
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - run: git fetch --no-tags --prune --depth=5 origin master
 
       - name: Setup Node.js
         uses: actions/setup-node@v1
@@ -24,7 +29,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Linting affected projects
-        run: yarn nx affected:lint
+        run: yarn nx affected:lint --base=origin/master
 
       - name: Testing affected projects
-        run: yarn nx affected:test --codeCoverage
+        run: yarn nx affected:test --base=origin/master --codeCoverage
