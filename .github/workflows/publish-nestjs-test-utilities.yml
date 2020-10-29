@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 12
+          node-version: 12publish-nestjs-test-utilities.yml
           registry-url: 'https://registry.npmjs.org'
           scope: '@jbiskur'
 
@@ -26,16 +26,16 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Linting affected projects
+      - name: Linting projects
         run: yarn nx lint ${{ matrix.project }}
 
-      - name: Testing affected projects
+      - name: Testing projects
         run: yarn nx test ${{ matrix.project }}
 
-      - name: Building affected projects
+      - name: Building projects
         run: yarn nx build ${{ matrix.project }}
 
-      - name: Publish affected projects
+      - name: Publish projects
         run: yarn publish --cwd ./dist/packages/${{ matrix.project }} --new-version ${{ github.event.release.tag_name }} --no-git-tag-version --access public --verbose
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
