@@ -101,6 +101,10 @@ describe("Application Builder", () => {
       run(appBuilder: NestApplicationBuilder): void {
         appBuilder.withTestModule(builder => builder.withModule(TestModuleB));
       }
+
+      withOptions(): this {
+        return this;
+      }
     }
 
     class TypeORMConnection implements BuilderPluginInterface {
@@ -122,7 +126,7 @@ describe("Application Builder", () => {
       app = await new ExtendedNestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withExtendedModuleA()
-        .with(GraphQL)
+        .with(GraphQL, builder => builder.withOptions())
         .with(TypeORMConnection)
         .build();
 

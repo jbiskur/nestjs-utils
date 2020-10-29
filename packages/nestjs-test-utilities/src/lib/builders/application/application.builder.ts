@@ -60,8 +60,14 @@ export class NestApplicationBuilder implements ApplicationBuilderInterface {
     return this;
   }
 
-  with<T extends BuilderPluginInterface>(plugin: { new (): T }): this {
-    new plugin().run(this);
+  with<T extends BuilderPluginInterface>(plugin: { new (): T }, pluginBuilder: (builder: T) => T = null): this {
+    if (pluginBuilder) {
+      const pluginInstance = pluginBuilder(new plugin());
+      pluginInstance.run(this);
+    }
+    else {
+      new plugin().run(this);
+    }
     return this;
   }
 }
