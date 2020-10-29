@@ -9,7 +9,8 @@ The test utilities contain a set of builders that should speed up testing using 
 - [Usage](#usage)
   - [Module](#module)
   - [Application](#application)
-  - [Server](#server)
+  - [Application Instance](#application-instance)
+  - [Plugins](#plugins)
 
 
 ## Installation
@@ -184,7 +185,7 @@ it("should work to extend the builder", async () => {
 
 this way the tests are setup consistently throughout the test suite.
 
-### Server
+### Application Instance
 The last builder that is provided is a way to wrap the application builder in an instance builder. This creates a full server than can be queried on localhost.
 
 ```typescript
