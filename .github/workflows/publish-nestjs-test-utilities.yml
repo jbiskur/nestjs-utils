@@ -33,7 +33,7 @@ jobs:
         run: yarn nx test ${{ matrix.project }}
 
       - name: Building projects
-        run: yarn nx build ${{ matrix.project }}
+        run: yarn nx build ${{ matrix.project }} --with-deps
 
       - name: Publish projects
         run: yarn publish --cwd ./dist/packages/${{ matrix.project }} --new-version ${{ github.event.release.tag_name }} --no-git-tag-version --access public --verbose
