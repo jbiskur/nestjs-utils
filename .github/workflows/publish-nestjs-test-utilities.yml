@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project: [nestjs-test-utilities]
+        project: [nestjs-test-utilities, nestjs-async-module]
 
     steps:
       - name: Git Checkout
