@@ -10,9 +10,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "packages/nestjs-test-utilities/**/*.ts"
-            ]
+            "lintFilePatterns": ["packages/nestjs-test-utilities/**/*.ts"]
           }
         },
         "test": {
@@ -29,9 +27,7 @@
             "tsConfig": "packages/nestjs-test-utilities/tsconfig.lib.json",
             "packageJson": "packages/nestjs-test-utilities/package.json",
             "main": "packages/nestjs-test-utilities/src/index.ts",
-            "assets": [
-              "packages/nestjs-test-utilities/*.md"
-            ]
+            "assets": ["packages/nestjs-test-utilities/*.md"]
           }
         },
         "publish": {
@@ -55,9 +51,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "packages/nestjs-async-module/**/*.ts"
-            ]
+            "lintFilePatterns": ["packages/nestjs-async-module/**/*.ts"]
           }
         },
         "test": {
@@ -74,9 +68,40 @@
             "tsConfig": "packages/nestjs-async-module/tsconfig.lib.json",
             "packageJson": "packages/nestjs-async-module/package.json",
             "main": "packages/nestjs-async-module/src/index.ts",
-            "assets": [
-              "packages/nestjs-async-module/*.md"
+            "assets": ["packages/nestjs-async-module/*.md"]
+          }
+        }
+      }
+    },
+    "nestjs-options-module-factory": {
+      "root": "packages/nestjs-options-module-factory",
+      "sourceRoot": "packages/nestjs-options-module-factory/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "packages/nestjs-options-module-factory/**/*.ts"
             ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "packages/nestjs-options-module-factory/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/nestjs-options-module-factory",
+            "tsConfig": "packages/nestjs-options-module-factory/tsconfig.lib.json",
+            "packageJson": "packages/nestjs-options-module-factory/package.json",
+            "main": "packages/nestjs-options-module-factory/src/index.ts",
+            "assets": ["packages/nestjs-options-module-factory/*.md"]
           }
         }
       }
