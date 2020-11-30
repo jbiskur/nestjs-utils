@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="NestJS Simple Async Module" type="JavaScriptTestRunnerJest">
-    <config-file value="$PROJECT_DIR$/packages/simple-async-module/jest.config.js" />
+  <configuration default="false" name="NestJS Async Module" type="JavaScriptTestRunnerJest">
+    <config-file value="$PROJECT_DIR$/packages/nestjs-async-module/jest.config.js" />
     <node-interpreter value="project" />
     <node-options value="" />
     <jest-package value="$PROJECT_DIR$/node_modules/jest" />
