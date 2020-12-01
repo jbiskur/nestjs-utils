@@ -29,7 +29,32 @@ yarn add --dev @jbiskur/nestjs-test-utilities
 
 more info [here](./packages/nestjs-test-utilities/README.md)
 
-## Simple Async Module
+## Async Module
+The async module is a simple utility class that helps create dynamic modules
+
+install using npm
+```npm  
+npm install --save-dev @jbiskur/nestjs-async-module
+```
+
+or using yarn
+```npm  
+yarn add --dev @jbiskur/nestjs-async-module
+```
+
+more info [here](./packages/nestjs-async-module/README.md)
 
 ## Options Module Factory
+The options module factory allows passing options to modules imported into the current module's context by creating a module and exporting the options; these can then be passed to the modules.
 
+install using npm
+```npm  
+npm install --save-dev @jbiskur/nestjs-options-module-factory
+```
+
+or using yarn
+```npm  
+yarn add --dev @jbiskur/nestjs-options-module-factory
+```
+
+more info [here](./packages/nestjs-options-module-factory/README.md)
