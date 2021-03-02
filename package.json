@@ -29,20 +29,20 @@
     "help": "nx help"
   },
   "peerDependencies": {
-    "@nestjs/common": "7.0.0",
-    "@nestjs/core": "7.0.0",
-    "@nestjs/platform-express": "7.0.0"
+    "@nestjs/common": "7.6.13",
+    "@nestjs/core": "7.6.13",
+    "@nestjs/platform-express": "7.6.13"
   },
   "dependencies": {
-    "@nestjs/testing": "7.0.0",
+    "@nestjs/testing": "7.6.13",
     "cross-fetch": "3.0.6",
     "reflect-metadata": "0.1.12",
     "rxjs": "6.0.0"
   },
   "devDependencies": {
-    "@nestjs/common": "7.0.0",
-    "@nestjs/core": "7.0.0",
-    "@nestjs/platform-express": "7.0.0",
+    "@nestjs/common": "7.6.13",
+    "@nestjs/core": "7.6.13",
+    "@nestjs/platform-express": "7.6.13",
     "@babel/core": "7.9.6",
     "@babel/plugin-proposal-decorators": "7.12.1",
     "@babel/preset-env": "7.9.6",
