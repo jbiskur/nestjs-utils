@@ -8,7 +8,7 @@ export abstract class AsyncModule {
     constProviderName: string = null,
     options: Pick<AsyncOptions<TOptions>, "imports" | "useFactory" | "inject"> | null = null,
     providers: Provider[] = [],
-    exports: [] = [],
+    exports: Provider[] = [],
   ): DynamicModule {
     const optionsProvider: Provider[] = [];
 
