@@ -29,9 +29,9 @@ import { createOptionsModule } from "@jbiskur/nestjs-options-module-factory";
 @Module({})
 class InnerTestModule extends AsyncModule {
   public static registerAsync(options: AsyncOptions<Options>): DynamicModule {
-    return {
-      ...this.doRegisterAsync(InnerTestModule, INNER_OPTIONS_NAME, options,[InnerTestService])
-    }
+    return this.doRegisterAsync(InnerTestModule, INNER_OPTIONS_NAME, options,{
+        providers: [InnerTestService]
+      });
   }
 }
 
@@ -40,18 +40,17 @@ class TestModule extends AsyncModule {
   public static registerAsync(options: AsyncOptions<Options>): DynamicModule {
     const optionsModule = createOptionsModule(OPTIONS_NAME, options);
 
-    return {
-      ...this.doRegisterAsync(TestModule),
+    return this.doRegisterAsync(TestModule, null, null, {
       imports: [
         optionsModule,
         InnerTestModule.registerAsync({
           imports: [optionsModule],
           inject: [OPTIONS_NAME],
-          useFactory: (outerOptions: Options) => ({value: outerOptions.value})
+          useFactory: (outerOptions: Options) => ({ value: outerOptions.value })
         })
       ],
       providers: [TestService]
-    }
+    });
   }
 }
 ```

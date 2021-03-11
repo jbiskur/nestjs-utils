@@ -39,15 +39,17 @@ class ExampleAsyncModule extends AsyncModule {
   public static registerAsync(
     options: AsyncOptions<ExampleOptions>,
   ): DynamicModule {
-    return {
-      ...this.doRegisterAsync<ExampleOptions>(
+    return this.doRegisterAsync<ExampleOptions>(
         ExampleAsyncModule,
         PROVIDER_OPTIONS_NAME,
         options,
-        [/* Any services */],
-      ),
-      /* ... spread to import modules etc. */
-    };
+        {
+          imports: [],
+          controllers: [],
+          providers: [],
+          exports: []
+        },
+      );
   }
 }
 ```

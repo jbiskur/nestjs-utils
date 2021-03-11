@@ -38,7 +38,9 @@ class ExampleAsyncModule extends AsyncModule {
         ExampleAsyncModule,
         PROVIDER_OPTIONS_NAME,
         options,
-        [ExampleService],
+        {
+          providers: [ExampleService]
+        },
       )
     };
   }

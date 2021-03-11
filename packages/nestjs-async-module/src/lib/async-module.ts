@@ -1,5 +1,6 @@
 import { DynamicModule, Provider, Type } from "@nestjs/common";
 import { AsyncOptions } from "./interfaces";
+import { ModuleMetadata } from "@nestjs/common/interfaces";
 
 export abstract class AsyncModule {
   protected static doRegisterAsync<TOptions>(
@@ -7,8 +8,7 @@ export abstract class AsyncModule {
     module: Type<any>,
     constProviderName: string = null,
     options: Pick<AsyncOptions<TOptions>, "imports" | "useFactory" | "inject"> | null = null,
-    providers: Provider[] = [],
-    exports: Provider[] = [],
+    dynamic: ModuleMetadata = null
   ): DynamicModule {
     const optionsProvider: Provider[] = [];
 
@@ -20,14 +20,21 @@ export abstract class AsyncModule {
       })
     }
 
-    return {
+    const moduleObject: DynamicModule = {
       module,
       imports: options && options.imports || [],
       providers: [
-        ...providers,
         ...optionsProvider,
       ],
-      exports: [...exports],
+      controllers: [],
+      exports: [],
     };
+
+    dynamic && dynamic.controllers && dynamic.controllers.forEach(controller => moduleObject.controllers.push(controller));
+    dynamic && dynamic.imports && dynamic.imports.forEach(importObj => moduleObject.imports.push(importObj));
+    dynamic && dynamic.providers && dynamic.providers.forEach(provider => moduleObject.providers.push(provider));
+    dynamic && dynamic.exports && dynamic.exports.forEach(exportObj => moduleObject.exports.push(exportObj));
+
+    return moduleObject;
   }
 }

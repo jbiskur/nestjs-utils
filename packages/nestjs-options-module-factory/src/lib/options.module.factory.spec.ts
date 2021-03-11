@@ -33,7 +33,9 @@ class InnerTestService {
 class InnerTestModule extends AsyncModule {
   public static registerAsync(options: AsyncOptions<Options>): DynamicModule {
     return {
-      ...this.doRegisterAsync(InnerTestModule, INNER_OPTIONS_NAME, options,[InnerTestService])
+      ...this.doRegisterAsync(InnerTestModule, INNER_OPTIONS_NAME, options,{
+        providers: [InnerTestService]
+      })
     }
   }
 }
