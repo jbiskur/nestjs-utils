@@ -1,4 +1,4 @@
-import { INestApplication } from "@nestjs/common";
+import { INestApplication, INestMicroservice } from "@nestjs/common";
 import {
   INestApplicationBuilderPlugin,
   NestApplicationBuilder,
@@ -9,11 +9,13 @@ import {
   TestModuleB,
 } from "../test-data/test-module.data";
 import {
-  ExtendedService,
+  ExtendedService, MicroserviceTestingService,
   SERVICE_B_RESPONSE,
   TestServiceA,
-  TestServiceB,
+  TestServiceB
 } from "../test-data/test-service.data";
+import { Transport } from "@nestjs/microservices";
+import { MicroserviceA, MicroserviceB } from "../test-data/";
 
 describe("Application Builder", () => {
   let app: INestApplication;
@@ -156,4 +158,37 @@ describe("Application Builder", () => {
       expect(serviceB.helloFromB()).toBe(mockedOutput);
     });
   });
+});
+
+describe("should work to build as microservice", () => {
+  let microservice: INestMicroservice;
+  let app: INestApplication;
+
+  beforeAll(async () => {
+    microservice = await new NestApplicationBuilder()
+      .withTestModule((builder) => builder.withModule(MicroserviceA))
+      .buildAsMicroservice({
+        transport: Transport.TCP,
+      });
+  });
+
+  afterAll(async () => {
+    await microservice.close();
+  })
+
+  beforeEach(async () => {
+    app = await new NestApplicationBuilder()
+      .withTestModule((builder) => builder.withModule(MicroserviceB))
+      .build();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it("should get message through nest microservice", async () => {
+    const sut = await app.resolve(MicroserviceTestingService);
+
+    expect(sut.sum([1,2,3,4,5])).toBe(15);
+  })
 });

@@ -1,6 +1,8 @@
 import { TestModuleBuilder } from "../module";
 import { INestApplication } from "@nestjs/common";
 import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
+import { MicroserviceOptions } from "@nestjs/microservices";
+import { NestMicroserviceOptions } from "@nestjs/common/interfaces/microservices/nest-microservice-options.interface";
 
 type OverrideProvider = {
   type: unknown;
@@ -17,6 +19,27 @@ export class NestApplicationBuilder {
   private overrideProviders: OverrideProvider[] = [];
 
   async build(): Promise<INestApplication> {
+    const testingModuleBuilder = this.createTestingModule();
+
+    const testingModule = await testingModuleBuilder.compile();
+    const app = testingModule.createNestApplication();
+    await app.init();
+    return app;
+  }
+
+  async buildAsMicroservice(options: MicroserviceOptions) {
+    const testingModuleBuilder = this.createTestingModule();
+
+    const testingModule = await testingModuleBuilder.compile();
+    const app = testingModule.createNestMicroservice<MicroserviceOptions>({
+      ...testingModule,
+      ...options
+    });
+    await app.listen(() => console.log("microservice is listening"));
+    return app;
+  }
+
+  private createTestingModule() {
     const testingModuleBuilder = this.testModuleBuilder.build();
 
     // loop through all override providers and apply them to the testing module
@@ -30,11 +53,7 @@ export class NestApplicationBuilder {
         overrideProvider.override.overriddenWith(provider);
       }
     });
-
-    const testingModule = await testingModuleBuilder.compile();
-    const app = testingModule.createNestApplication();
-    await app.init();
-    return app;
+    return testingModuleBuilder;
   }
 
   withOverrideProvider<T>(

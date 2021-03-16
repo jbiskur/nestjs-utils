@@ -17,7 +17,7 @@ import { Mock } from "moq.ts";
 describe("Application Server Instance", () => {
   describe.each([
     [undefined, 3333],
-    [8080, 8080],
+    [8765, 8765],
   ])("with port %s expected to be %i", (port, expected) => {
     let app: ApplicationInstance;
     let instance: INestApplication;
