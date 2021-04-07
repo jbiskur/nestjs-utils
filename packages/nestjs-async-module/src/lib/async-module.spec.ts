@@ -82,3 +82,74 @@ describe("Simple Async Module", () => {
     await TestOptionsReturnMessage(app);
   });
 });
+
+
+@Injectable()
+class MessageService {
+  getMessage() {
+    return "hello";
+  }
+}
+
+@Injectable()
+class ExampleHelloService {
+  constructor(private readonly messageService: MessageService) {}
+
+  sayHello() {
+    return this.messageService.getMessage();
+  }
+}
+
+@Module({
+  providers: [MessageService],
+  exports: [MessageService],
+})
+class ExternalModule {}
+
+@Module({})
+class NoOptionsModule extends AsyncModule {
+  public static registerAsync(options: AsyncOptions<unknown>) {
+    return this.doRegisterAsync(
+      NoOptionsModule,
+      null,
+      options,
+      {
+        providers: [
+          ExampleHelloService
+        ]
+      }
+    )
+  }
+}
+
+describe("Simple Async Module No Options", () => {
+  let sut: ExampleHelloService;
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    app = await new NestApplicationBuilder()
+      .withTestModule((testModule) =>
+        testModule.withModule(
+          NoOptionsModule.registerAsync({
+            imports: [ExternalModule],
+            inject: [MessageService]
+          }),
+        ),
+      )
+      .build();
+
+    sut = await app.resolve(ExampleHelloService);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it("should be defined", async () => {
+    expect(sut).toBeDefined();
+  });
+
+  it("should return hello from service", async () => {
+    expect(sut.sayHello()).toBe("hello");
+  });
+});

@@ -68,3 +68,44 @@ to then use the module you just use the register async and then typescript uses 
 })
 export class AppModule {}
 ```
+
+# Facilitate Injecting Services
+another use-case is to purely use it to facilitate injecting services to dynamic modules.
+
+```typescript
+//...nestjs imports
+import { AsyncModule, AsyncOptions } from "@jbiskur/nestjs-async-module";
+
+@Module({})
+class ExampleAsyncModule extends AsyncModule {
+  public static registerAsync(
+    options: AsyncOptions<unknown>,
+  ): DynamicModule {
+    return this.doRegisterAsync(
+        ExampleAsyncModule,
+        null,
+        options,
+        {
+          imports: [],
+          controllers: [],
+          providers: [],
+          exports: []
+        },
+      );
+  }
+}
+```
+
+using it is then as simple as the following.
+
+```typescript
+@module({
+  imports: [
+    ExampleAsyncModule.registerAsync({
+      imports: [SomeModule],
+      inject: [AService]
+    })  
+  ]
+})
+export class AppModule {}
+```
