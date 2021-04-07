@@ -12,7 +12,7 @@ export abstract class AsyncModule {
   ): DynamicModule {
     const optionsProvider: Provider[] = [];
 
-    if (options.useFactory) {
+    if (options && options.useFactory) {
       optionsProvider.push({
         provide: constProviderName,
         useFactory: options.useFactory,

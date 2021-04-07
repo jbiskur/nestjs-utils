@@ -2,7 +2,6 @@ import { TestModuleBuilder } from "../module";
 import { INestApplication } from "@nestjs/common";
 import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
 import { MicroserviceOptions } from "@nestjs/microservices";
-import { NestMicroserviceOptions } from "@nestjs/common/interfaces/microservices/nest-microservice-options.interface";
 
 type OverrideProvider = {
   type: unknown;
