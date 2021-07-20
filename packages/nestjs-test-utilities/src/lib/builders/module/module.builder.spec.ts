@@ -21,4 +21,18 @@ describe("Module Builder", () => {
     expect(await serviceA.helloFromA()).toBe(SERVICE_A_RESPONSE);
     expect(await serviceB.helloFromB()).toBe(SERVICE_B_RESPONSE);
   });
+
+  it("should include providers passed to the builder", async () => {
+    const module = await new TestModuleBuilder()
+      .withModule(TestModuleA)
+      .withProvider(TestServiceB)
+      .build()
+      .compile();
+
+    const serviceA = module.get(TestServiceA);
+    const serviceB = await module.resolve(TestServiceB);
+
+    expect(await serviceA.helloFromA()).toBe(SERVICE_A_RESPONSE);
+    expect(await serviceB.helloFromB()).toBe(SERVICE_B_RESPONSE);
+  })
 });
