@@ -339,3 +339,82 @@ app = await new NestApplicationBuilder()
 When sharing **NestApplicationBuilderPlugins** on npm, please use the following naming convention
 
 `<name>-nestjs-builder-plugin`
+
+###Using it with another TestModuleBuilder
+for example using it to test [nest-commander](https://www.npmjs.com/package/nest-commander) projects with [nest-commander-testing](https://www.npmjs.com/package/nest-commander-testing).
+
+first, add the packages
+
+```npm  
+npm install --save nest-commander && npm install --save-dev nest-commander-testing
+```
+
+using yarn.
+```yarn  
+yarn add nest-commander && yarn add --dev nest-commander-testing
+```
+
+then implement your own builder like this:
+```typescript
+import {
+  ITestModuleBuilder,
+  NestJSModule,
+} from "@jbiskur/nestjs-test-utilities";
+
+export class TestCommandBuilder implements ITestModuleBuilder {
+  private imports: NestJSModule[] = [];
+  private providers: Provider<unknown>[] = [];
+
+  build(): TestingModuleBuilder {
+    return CommandTestFactory.createTestingCommand({
+      imports: [...this.imports],
+      providers: [...this.providers],
+    });
+  }
+
+  withModule(nestModule: NestJSModule): ITestModuleBuilder {
+    this.imports.push(nestModule);
+    return this;
+  }
+
+  withProvider(provider: Provider<unknown>): ITestModuleBuilder {
+    this.providers.push(provider);
+    return this;
+  }
+}
+```
+then to use it properly with nest-commander-testing extend the nestjs application builder
+
+```typescript
+import {
+  NestApplicationBuilder
+} from "@jbiskur/nestjs-test-utilities";
+
+export class GTCommandInstanceBuilder extends NestApplicationBuilder<
+  TestCommandBuilder
+> {
+  constructor() {
+    super(TestCommandBuilder);
+  }
+
+  async buildCommandInstance(): Promise<TestingModule> {
+    const testingModuleBuilder = await this.createTestingModule();
+
+    const testingModule = await testingModuleBuilder.compile();
+    return await testingModule.init();
+  }
+}
+```
+
+it can then be used normally
+```typescript
+commandInstance = await new GTCommandInstanceBuilder()
+      .withTestModule((builder) => builder.withModule({
+        imports:[AppModule]
+      }))
+      .with(LogModulePlugin)
+      .withOverrideProvider(SomeService, (overrideWith) =>
+        overrideWith.useValue(someMockedService)
+      )
+      .buildCommandInstance();
+```
