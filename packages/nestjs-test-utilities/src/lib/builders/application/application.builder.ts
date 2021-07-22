@@ -22,7 +22,7 @@ export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBui
   }
 
   async build(): Promise<INestApplication> {
-    const testingModuleBuilder = this.createTestingModule();
+    const testingModuleBuilder = await this.createTestingModule();
 
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestApplication();
@@ -31,7 +31,7 @@ export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBui
   }
 
   async buildAsMicroservice(options: MicroserviceOptions) {
-    const testingModuleBuilder = this.createTestingModule();
+    const testingModuleBuilder = await this.createTestingModule();
 
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestMicroservice<MicroserviceOptions>({
@@ -43,8 +43,8 @@ export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBui
     return app;
   }
 
-  protected createTestingModule() {
-    const testingModuleBuilder = this.testModuleBuilder.build();
+  protected async createTestingModule() {
+    const testingModuleBuilder = await this.testModuleBuilder.build();
 
     // loop through all override providers and apply them to the testing module
     this.overrideProviders.forEach((overrideProvider: OverrideProvider) => {

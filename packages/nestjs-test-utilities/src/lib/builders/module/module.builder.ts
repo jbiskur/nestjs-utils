@@ -8,7 +8,7 @@ export type NestJSModule =
   | ForwardReference<unknown>;
 
 export interface ITestModuleBuilder {
-  build(): TestingModuleBuilder;
+  build(): TestingModuleBuilder | Promise<TestingModuleBuilder>;
   withModule(nestModule: NestJSModule): ITestModuleBuilder;
   withProvider(provider: Provider<unknown>): ITestModuleBuilder;
 }
