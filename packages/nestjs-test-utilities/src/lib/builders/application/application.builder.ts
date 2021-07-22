@@ -14,8 +14,8 @@ export interface INestApplicationBuilderPlugin {
 }
 
 export class NestApplicationBuilder {
-  private testModuleBuilder: TestModuleBuilder = new TestModuleBuilder();
-  private overrideProviders: OverrideProvider[] = [];
+  protected testModuleBuilder: TestModuleBuilder = new TestModuleBuilder();
+  protected overrideProviders: OverrideProvider[] = [];
 
   async build(): Promise<INestApplication> {
     const testingModuleBuilder = this.createTestingModule();
@@ -39,7 +39,7 @@ export class NestApplicationBuilder {
     return app;
   }
 
-  private createTestingModule() {
+  protected createTestingModule() {
     const testingModuleBuilder = this.testModuleBuilder.build();
 
     // loop through all override providers and apply them to the testing module
