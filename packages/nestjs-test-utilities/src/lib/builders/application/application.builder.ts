@@ -1,4 +1,4 @@
-import { TestModuleBuilder } from "../module";
+import { ITestModuleBuilder, TestModuleBuilder } from "../module";
 import { INestApplication } from "@nestjs/common";
 import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
 import { MicroserviceOptions } from "@nestjs/microservices";
@@ -13,9 +13,13 @@ export interface INestApplicationBuilderPlugin {
   run(appBuilder: NestApplicationBuilder): void;
 }
 
-export class NestApplicationBuilder {
-  protected testModuleBuilder: TestModuleBuilder = new TestModuleBuilder();
+export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBuilder> {
+  protected testModuleBuilder: ITestModuleBuilder;
   protected overrideProviders: OverrideProvider[] = [];
+
+  constructor(c?: (new () => T)) {
+    this.testModuleBuilder = c ? new c() : new TestModuleBuilder();
+  }
 
   async build(): Promise<INestApplication> {
     const testingModuleBuilder = this.createTestingModule();
@@ -70,7 +74,7 @@ export class NestApplicationBuilder {
   }
 
   withTestModule(
-    testModuleBuilder: (builder: TestModuleBuilder) => TestModuleBuilder
+    testModuleBuilder: (builder: ITestModuleBuilder) => ITestModuleBuilder
   ): this {
     this.testModuleBuilder = testModuleBuilder(this.testModuleBuilder);
     return this;

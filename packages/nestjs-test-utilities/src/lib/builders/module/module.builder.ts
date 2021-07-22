@@ -7,7 +7,13 @@ export type NestJSModule =
   | Promise<DynamicModule>
   | ForwardReference<unknown>;
 
-export class TestModuleBuilder {
+export interface ITestModuleBuilder {
+  build(): TestingModuleBuilder;
+  withModule(nestModule: NestJSModule): ITestModuleBuilder;
+  withProvider(provider: Provider<unknown>): ITestModuleBuilder;
+}
+
+export class TestModuleBuilder implements ITestModuleBuilder{
   private imports: NestJSModule[] = [];
   private providers: Provider<unknown>[] = [];
 
@@ -18,12 +24,12 @@ export class TestModuleBuilder {
     });
   }
 
-  withModule(nestModule: NestJSModule): TestModuleBuilder {
+  withModule(nestModule: NestJSModule): this {
     this.imports.push(nestModule);
     return this;
   }
 
-  withProvider(provider: Provider<unknown>): TestModuleBuilder {
+  withProvider(provider: Provider<unknown>): this {
     this.providers.push(provider);
     return this;
   }
