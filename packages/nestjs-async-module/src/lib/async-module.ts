@@ -60,11 +60,6 @@ export abstract class AsyncModule {
       exports: [],
     };
 
-    if (dynamic)
-    {
-      console.warn("the dynamic property will be deprecated in a later version, use the @Module decorator instead.");
-    }
-
     const importsMeta: Pick<ModuleMetadata, "imports"> = Reflect.getMetadata("imports", this);
     const providersMeta: Pick<ModuleMetadata, "providers"> = Reflect.getMetadata("providers", this);
     const controllersMeta: Pick<ModuleMetadata, "controllers"> = Reflect.getMetadata("controllers", this);
