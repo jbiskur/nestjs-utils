@@ -34,24 +34,13 @@ interface ExampleOptions {
 // const name of the options provider, than can be injected into services within the module
 const PROVIDER_OPTIONS_NAME = "EXAMPLE_OPTIONS_PROVIDER";
 
-@Module({})
-class ExampleAsyncModule extends AsyncModule {
-  public static registerAsync(
-    options: AsyncOptions<ExampleOptions>,
-  ): DynamicModule {
-    return this.doRegisterAsync<ExampleOptions>(
-        ExampleAsyncModule,
-        PROVIDER_OPTIONS_NAME,
-        options,
-        {
-          imports: [],
-          controllers: [],
-          providers: [],
-          exports: []
-        },
-      );
-  }
-}
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [],
+  exports: []
+})
+class ExampleAsyncModule extends createAsyncModule<ExampleOptions>(PROVIDER_OPTIONS_NAME) {}
 ```
 
 to then use the module you just use the register async and then typescript uses the interface for intellisense.
@@ -63,7 +52,7 @@ to then use the module you just use the register async and then typescript uses 
       useFactory: () => ({
         name: "hello world"
       })
-    })  
+    }, ExampleAsyncModule),  
   ]
 })
 export class AppModule {}
@@ -76,24 +65,13 @@ another use-case is to purely use it to facilitate injecting services to dynamic
 //...nestjs imports
 import { AsyncModule, AsyncOptions } from "@jbiskur/nestjs-async-module";
 
-@Module({})
-class ExampleAsyncModule extends AsyncModule {
-  public static registerAsync(
-    options: AsyncOptions<unknown>,
-  ): DynamicModule {
-    return this.doRegisterAsync(
-        ExampleAsyncModule,
-        null,
-        options,
-        {
-          imports: [],
-          controllers: [],
-          providers: [],
-          exports: []
-        },
-      );
-  }
-}
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [],
+  exports: []
+})
+class ExampleAsyncModule extends createAsyncModule() {}
 ```
 
 using it is then as simple as the following.
@@ -104,7 +82,7 @@ using it is then as simple as the following.
     ExampleAsyncModule.registerAsync({
       imports: [SomeModule],
       inject: [AService]
-    })  
+    },ExampleAsyncModule)  
   ]
 })
 export class AppModule {}

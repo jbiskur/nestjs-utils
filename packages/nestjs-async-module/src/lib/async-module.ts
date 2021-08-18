@@ -1,8 +1,38 @@
 import { DynamicModule, Provider, Type } from "@nestjs/common";
 import { AsyncOptions } from "./interfaces";
 import { ModuleMetadata } from "@nestjs/common/interfaces";
+import _ from "lodash";
+
+export interface IAsyncModule<TOptions, COptions = unknown> {
+  new (): Type<TOptions>;
+
+  registerAsync(options: AsyncOptions<TOptions>, type?: Type<COptions>): DynamicModule;
+
+  doRegisterAsync<TOptions>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    module: Type,
+    constProviderName: string,
+    options: Pick<AsyncOptions<TOptions>, "imports" | "useFactory" | "inject"> | null,
+    dynamic: ModuleMetadata
+  ): DynamicModule;
+}
+
+export const createAsyncModule = <TOptions = unknown>(optionsProviderName: string = null) => {
+  abstract class AsyncModuleDynamic extends AsyncModule {
+    public static registerAsync(options: AsyncOptions<TOptions>, type?: Type): DynamicModule {
+      return this.doRegisterAsync(
+        type,
+        optionsProviderName,
+        options
+      );
+    }
+  }
+
+  return AsyncModuleDynamic as unknown as IAsyncModule<TOptions>;
+}
 
 export abstract class AsyncModule {
+  // eslint-disable-next-line
   protected static doRegisterAsync<TOptions>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     module: Type<any>,
@@ -30,10 +60,20 @@ export abstract class AsyncModule {
       exports: [],
     };
 
-    dynamic && dynamic.controllers && dynamic.controllers.forEach(controller => moduleObject.controllers.push(controller));
-    dynamic && dynamic.imports && dynamic.imports.forEach(importObj => moduleObject.imports.push(importObj));
-    dynamic && dynamic.providers && dynamic.providers.forEach(provider => moduleObject.providers.push(provider));
-    dynamic && dynamic.exports && dynamic.exports.forEach(exportObj => moduleObject.exports.push(exportObj));
+    if (dynamic)
+    {
+      console.warn("the dynamic property will be deprecated in a later version, use the @Module decorator instead.");
+    }
+
+    const importsMeta: Pick<ModuleMetadata, "imports"> = Reflect.getMetadata("imports", this);
+    const providersMeta: Pick<ModuleMetadata, "providers"> = Reflect.getMetadata("providers", this);
+    const controllersMeta: Pick<ModuleMetadata, "controllers"> = Reflect.getMetadata("controllers", this);
+    const exportsMeta: Pick<ModuleMetadata, "exports"> = Reflect.getMetadata("exports", this);
+
+    moduleObject.imports = _.concat(moduleObject.imports, dynamic?.imports && dynamic.imports, importsMeta).filter(Boolean);
+    moduleObject.providers = _.concat(moduleObject.providers, dynamic?.providers && dynamic.providers, providersMeta).filter(Boolean);
+    moduleObject.controllers = _.concat(moduleObject.controllers, dynamic?.controllers && dynamic.controllers, controllersMeta).filter(Boolean);
+    moduleObject.exports = _.concat(moduleObject.exports, dynamic?.exports && dynamic.exports, exportsMeta).filter(Boolean);
 
     return moduleObject;
   }

@@ -26,14 +26,10 @@ The library provides a utility factory function that creates a module with the o
 // ...nestjs and async module imports
 import { createOptionsModule } from "@jbiskur/nestjs-options-module-factory";
 
-@Module({})
-class InnerTestModule extends AsyncModule {
-  public static registerAsync(options: AsyncOptions<Options>): DynamicModule {
-    return this.doRegisterAsync(InnerTestModule, INNER_OPTIONS_NAME, options,{
-        providers: [InnerTestService]
-      });
-  }
-}
+@Module({
+  providers: [InnerTestService]
+})
+class InnerTestModule extends createAsyncModule<Options>(INNER_OPTIONS_NAME) {}
 
 @Module({})
 class TestModule extends AsyncModule {
@@ -47,7 +43,7 @@ class TestModule extends AsyncModule {
           imports: [optionsModule],
           inject: [OPTIONS_NAME],
           useFactory: (outerOptions: Options) => ({ value: outerOptions.value })
-        })
+        }, InnerTestModule)
       ],
       providers: [TestService]
     });

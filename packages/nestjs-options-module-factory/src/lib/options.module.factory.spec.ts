@@ -1,5 +1,5 @@
 import { DynamicModule, INestApplication, Inject, Injectable, Module } from '@nestjs/common';
-import { AsyncModule, AsyncOptions } from '@jbiskur/nestjs-async-module';
+import { AsyncModule, AsyncOptions, createAsyncModule } from "@jbiskur/nestjs-async-module";
 import { createOptionsModule } from "./options.module.factory";
 import { NestApplicationBuilder } from '@jbiskur/nestjs-test-utilities';
 
@@ -29,14 +29,12 @@ class InnerTestService {
   }
 }
 
-@Module({})
-class InnerTestModule extends AsyncModule {
+@Module({
+  providers: [InnerTestService]
+})
+class InnerTestModule extends createAsyncModule<Options>(INNER_OPTIONS_NAME) {
   public static registerAsync(options: AsyncOptions<Options>): DynamicModule {
-    return {
-      ...this.doRegisterAsync(InnerTestModule, INNER_OPTIONS_NAME, options,{
-        providers: [InnerTestService]
-      })
-    }
+    return super.registerAsync(options, InnerTestModule);
   }
 }
 

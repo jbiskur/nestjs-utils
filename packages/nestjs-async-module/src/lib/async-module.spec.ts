@@ -1,13 +1,14 @@
-import { AsyncModule } from "./async-module";
+import { AsyncModule, createAsyncModule } from "./async-module";
 import {
+  Controller,
   DynamicModule,
   INestApplication,
   Inject,
   Injectable,
-  Module,
+  Module
 } from "@nestjs/common";
 import { AsyncOptions } from "./interfaces";
-import { NestApplicationBuilder } from '@jbiskur/nestjs-test-utilities';
+import { NestApplicationBuilder, TestModuleA } from "@jbiskur/nestjs-test-utilities";
 
 interface ExampleOptions {
   name: string;
@@ -30,7 +31,7 @@ const EXAMPLE_MESSAGE = "hello world";
 
 @Module({})
 class ExampleAsyncModule extends AsyncModule {
-  public static registerAsync(
+  public static registerAsync<ExampleOptions>(
     options: AsyncOptions<ExampleOptions>,
   ): DynamicModule {
     return {
@@ -83,6 +84,114 @@ describe("Simple Async Module", () => {
   });
 });
 
+@Controller()
+class TestController {}
+
+@Module({
+  imports: [TestModuleA],
+  providers: [ExampleService],
+  exports: [ExampleService],
+  controllers: [TestController],
+})
+class ExampleMetadataAsyncModule extends AsyncModule {
+  public static registerAsync<ExampleOptions>(
+    options: AsyncOptions<ExampleOptions>,
+  ): DynamicModule {
+    return {
+      ...this.doRegisterAsync<ExampleOptions>(
+        ExampleAsyncModule,
+        PROVIDER_OPTIONS_NAME,
+        options
+      )
+    };
+  }
+}
+
+describe("Simple Async module using metadata and doRegisterAsync", () => {
+  let dynamicModule;
+  let app: INestApplication;
+  let controller: TestController;
+  let extraModule: TestModuleA;
+
+  beforeEach(async () => {
+    app = await new NestApplicationBuilder()
+      .withTestModule((testModule) =>
+        testModule.withModule(
+          ExampleMetadataAsyncModule.registerAsync({
+            useFactory: () => ({ name: EXAMPLE_MESSAGE }),
+          }),
+        ),
+      )
+      .build();
+
+    dynamicModule = app.get(ExampleAsyncModule);
+    controller = await app.resolve(TestController);
+    extraModule = app.get(TestModuleA);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it("should be defined", async () => {
+    expect(dynamicModule).toBeDefined();
+    expect(controller).toBeDefined();
+    expect(extraModule).toBeDefined();
+  });
+
+  it("should return hello world from service", async () => {
+    await TestOptionsReturnMessage(app);
+  });
+});
+
+@Module({
+  imports: [TestModuleA],
+  providers: [ExampleService, ExampleAsyncModule],
+  exports: [ExampleService],
+  controllers: [TestController],
+})
+class ExampleMetadataOnly extends createAsyncModule<ExampleOptions>(PROVIDER_OPTIONS_NAME) {
+  public static registerAsync(options: AsyncOptions<ExampleOptions>): DynamicModule {
+    return super.registerAsync(options, ExampleMetadataOnly);
+  }
+}
+
+describe("Simple Async module using only metadata", () => {
+  let app: INestApplication;
+  let controller: TestController;
+  let exampleModule: ExampleService;
+  let extraModule: TestModuleA;
+
+  beforeEach(async () => {
+    app = await new NestApplicationBuilder()
+      .withTestModule((testModule) =>
+        testModule.withModule(
+          ExampleMetadataOnly.registerAsync({
+            useFactory: () => ({ name: EXAMPLE_MESSAGE }),
+          }),
+        ),
+      )
+      .build();
+
+    exampleModule = app.get(ExampleService);
+    controller = await app.resolve(TestController);
+    extraModule = app.get(TestModuleA);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it("should be defined", async () => {
+    expect(exampleModule).toBeDefined();
+    expect(controller).toBeDefined();
+    expect(extraModule).toBeDefined();
+  });
+
+  it("should return hello world from service", async () => {
+    await TestOptionsReturnMessage(app);
+  });
+});
 
 @Injectable()
 class MessageService {
@@ -106,19 +215,12 @@ class ExampleHelloService {
 })
 class ExternalModule {}
 
-@Module({})
-class NoOptionsModule extends AsyncModule {
-  public static registerAsync(options: AsyncOptions<unknown>) {
-    return this.doRegisterAsync(
-      NoOptionsModule,
-      null,
-      options,
-      {
-        providers: [
-          ExampleHelloService
-        ]
-      }
-    )
+@Module({
+  providers: [ExampleHelloService]
+})
+class NoOptionsModule extends createAsyncModule() {
+  public static registerAsync(options: AsyncOptions<unknown>): DynamicModule {
+    return super.registerAsync(options, NoOptionsModule);
   }
 }
 
