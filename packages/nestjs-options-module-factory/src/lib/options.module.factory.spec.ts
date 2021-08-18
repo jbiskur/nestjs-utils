@@ -1,11 +1,11 @@
-import { DynamicModule, INestApplication, Inject, Injectable, Module } from '@nestjs/common';
+import { DynamicModule, INestApplication, Injectable, Module } from '@nestjs/common';
 import { AsyncModule, AsyncOptions, createAsyncModule } from "@jbiskur/nestjs-async-module";
 import { createOptionsModule } from "./options.module.factory";
 import { NestApplicationBuilder } from '@jbiskur/nestjs-test-utilities';
+import { ModuleOptions } from "@jbiskur/nestjs-async-module";
 
 const correctValue = "Hello World";
 const OPTIONS_NAME = "OPTIONS_NAME";
-const INNER_OPTIONS_NAME = "INNER_OPTIONS_NAME";
 
 interface Options {
   value: string;
@@ -13,48 +13,53 @@ interface Options {
 
 @Injectable()
 class TestService {
-  constructor(@Inject(OPTIONS_NAME)private readonly options: Options) {}
+  constructor(private readonly options: ModuleOptions<Options>) {}
 
   getExample(): string {
-    return this.options.value;
+    return this.options.get().value;
   }
 }
 
 @Injectable()
 class InnerTestService {
-  constructor(@Inject(INNER_OPTIONS_NAME)private readonly options: Options) {}
+  constructor(private readonly options: ModuleOptions<Options>) {}
 
   getExample(): string {
-    return this.options.value;
+    return this.options.get().value;
   }
 }
 
 @Module({
   providers: [InnerTestService]
 })
-class InnerTestModule extends createAsyncModule<Options>(INNER_OPTIONS_NAME) {
+class InnerTestModule extends createAsyncModule<Options>() {
   public static registerAsync(options: AsyncOptions<Options>): DynamicModule {
     return super.registerAsync(options, InnerTestModule);
   }
 }
 
-@Module({})
+@Module({
+  providers: [TestService]
+})
 class TestModule extends AsyncModule {
   public static registerAsync(options: AsyncOptions<Options>): DynamicModule {
     const optionsModule = createOptionsModule(OPTIONS_NAME, options);
 
-    return {
-      ...this.doRegisterAsync(TestModule),
-      imports: [
-        optionsModule,
-        InnerTestModule.registerAsync({
-          imports: [optionsModule],
-          inject: [OPTIONS_NAME],
-          useFactory: (outerOptions: Options) => ({value: outerOptions.value})
-        })
-      ],
-      providers: [TestService]
-    }
+    return this.doRegisterAsync(
+      TestModule,
+      null,
+      null,
+      {
+        imports: [
+          optionsModule,
+          InnerTestModule.registerAsync({
+            imports: [optionsModule],
+            inject: [OPTIONS_NAME],
+            useFactory: (outerOptions: Options) => ({value: outerOptions.value})
+          })
+        ]
+      }
+    )
   }
 }
 

@@ -31,16 +31,13 @@ interface ExampleOptions {
   name: string;
 }
 
-// const name of the options provider, than can be injected into services within the module
-const PROVIDER_OPTIONS_NAME = "EXAMPLE_OPTIONS_PROVIDER";
-
 @Module({
   imports: [],
   controllers: [],
   providers: [],
   exports: []
 })
-class ExampleAsyncModule extends createAsyncModule<ExampleOptions>(PROVIDER_OPTIONS_NAME) {}
+class ExampleAsyncModule extends createAsyncModule<ExampleOptions>() {}
 ```
 
 to then use the module you just use the register async and then typescript uses the interface for intellisense.
@@ -57,6 +54,24 @@ to then use the module you just use the register async and then typescript uses 
 })
 export class AppModule {}
 ```
+
+## Accessing Options
+To access options registered with this dynamic module can be done with the following:
+
+```typescript
+@Injectable()
+class ExampleService {
+  constructor(
+    private readonly options: ModuleOptions<ExampleOptions>,
+  ) {}
+
+  testOptions() {
+    return this.options.get().name;
+  }
+}
+```
+
+The ModuleOptions service discovers all tokens noted with uppercase `_OPTIONS` within the current module, and they are flattened into the return of the `get()` method. TypeScript is informed via the template parameter `ModuleOptions<TOptions>`. These options are not validated on retrieval.
 
 # Facilitate Injecting Services
 another use-case is to purely use it to facilitate injecting services to dynamic modules.

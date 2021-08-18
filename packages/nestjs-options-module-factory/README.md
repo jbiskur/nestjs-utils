@@ -29,7 +29,7 @@ import { createOptionsModule } from "@jbiskur/nestjs-options-module-factory";
 @Module({
   providers: [InnerTestService]
 })
-class InnerTestModule extends createAsyncModule<Options>(INNER_OPTIONS_NAME) {}
+class InnerTestModule extends createAsyncModule<Options>() {}
 
 @Module({})
 class TestModule extends AsyncModule {

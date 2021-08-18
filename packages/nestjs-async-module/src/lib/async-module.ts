@@ -2,6 +2,7 @@ import { DynamicModule, Provider, Type } from "@nestjs/common";
 import { AsyncOptions } from "./interfaces";
 import { ModuleMetadata } from "@nestjs/common/interfaces";
 import _ from "lodash";
+import { createOptionsToken, ModuleOptions } from "./async-module-options.service";
 
 export interface IAsyncModule<TOptions, COptions = unknown> {
   new (): Type<TOptions>;
@@ -22,7 +23,7 @@ export const createAsyncModule = <TOptions = unknown>(optionsProviderName: strin
     public static registerAsync(options: AsyncOptions<TOptions>, type?: Type): DynamicModule {
       return this.doRegisterAsync(
         type,
-        optionsProviderName,
+        createOptionsToken(optionsProviderName ?? undefined),
         options
       );
     }
@@ -55,6 +56,7 @@ export abstract class AsyncModule {
       imports: options && options.imports || [],
       providers: [
         ...optionsProvider,
+        ModuleOptions
       ],
       controllers: [],
       exports: [],
