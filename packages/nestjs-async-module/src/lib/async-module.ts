@@ -62,15 +62,15 @@ export abstract class AsyncModule {
       exports: [],
     };
 
-    const importsMeta: Pick<ModuleMetadata, "imports"> = Reflect.getMetadata("imports", this);
-    const providersMeta: Pick<ModuleMetadata, "providers"> = Reflect.getMetadata("providers", this);
-    const controllersMeta: Pick<ModuleMetadata, "controllers"> = Reflect.getMetadata("controllers", this);
-    const exportsMeta: Pick<ModuleMetadata, "exports"> = Reflect.getMetadata("exports", this);
+    const importsMeta: Pick<ModuleMetadata, "imports"> = { imports: Reflect.getMetadata("imports", this) };
+    const providersMeta: Pick<ModuleMetadata, "providers"> = { providers: Reflect.getMetadata("providers", this) };
+    const controllersMeta: Pick<ModuleMetadata, "controllers"> = { controllers: Reflect.getMetadata("controllers", this) };
+    const exportsMeta: Pick<ModuleMetadata, "exports"> = { exports: Reflect.getMetadata("exports", this) };
 
-    moduleObject.imports = _.concat(moduleObject.imports, dynamic?.imports && dynamic.imports, importsMeta).filter(Boolean);
-    moduleObject.providers = _.concat(moduleObject.providers, dynamic?.providers && dynamic.providers, providersMeta).filter(Boolean);
-    moduleObject.controllers = _.concat(moduleObject.controllers, dynamic?.controllers && dynamic.controllers, controllersMeta).filter(Boolean);
-    moduleObject.exports = _.concat(moduleObject.exports, dynamic?.exports && dynamic.exports, exportsMeta).filter(Boolean);
+    moduleObject.imports = _.concat(moduleObject.imports, dynamic?.imports && dynamic.imports, importsMeta.imports).filter(Boolean);
+    moduleObject.providers = _.concat(moduleObject.providers, dynamic?.providers && dynamic.providers, providersMeta.providers).filter(Boolean);
+    moduleObject.controllers = _.concat(moduleObject.controllers, dynamic?.controllers && dynamic.controllers, controllersMeta.controllers).filter(Boolean);
+    moduleObject.exports = _.concat(moduleObject.exports, dynamic?.exports && dynamic.exports, exportsMeta.exports).filter(Boolean);
 
     return moduleObject;
   }

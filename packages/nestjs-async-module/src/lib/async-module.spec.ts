@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { AsyncOptions } from "./interfaces";
 import { NestApplicationBuilder, TestModuleA } from "@jbiskur/nestjs-test-utilities";
-import { ModuleOptions } from "./";
+import { createOptionsToken, ModuleOptions } from "./";
 
 interface ExampleOptions {
   name: string;
@@ -255,5 +255,64 @@ describe("Simple Async Module No Options", () => {
 
   it("should return hello from service", async () => {
     expect(sut.sayHello()).toBe("hello");
+  });
+});
+
+@Injectable()
+class ExampleInlineService {
+  constructor(private readonly hello: string) {}
+
+  sayHello() {
+    return this.hello;
+  }
+}
+
+const optionsToken = createOptionsToken();
+
+@Module({
+  providers: [
+    {
+      provide: ExampleInlineService,
+      inject: [optionsToken],
+      useFactory: (options: ExampleOptions) => new ExampleInlineService(options.name)
+    }
+  ]
+})
+class ExampleSameScopeModule extends createAsyncModule<ExampleOptions>(optionsToken) {
+  public static registerAsync(options: AsyncOptions<ExampleOptions>): DynamicModule {
+    return super.registerAsync(options, ExampleSameScopeModule);
+  }
+}
+
+describe("Simple Async Module that injects options in the same scope using provide", () => {
+
+
+  let sut: ExampleInlineService;
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    app = await new NestApplicationBuilder()
+      .withTestModule((testModule) =>
+        testModule.withModule(
+          ExampleSameScopeModule.registerAsync({
+            useFactory: () => ({ name: EXAMPLE_MESSAGE }),
+          }),
+        ),
+      )
+      .build();
+
+    sut = await app.resolve(ExampleInlineService);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it("should be defined", async () => {
+    expect(sut).toBeDefined();
+  });
+
+  it("should return hello from service", async () => {
+    expect(sut.sayHello()).toBe(EXAMPLE_MESSAGE);
   });
 });
