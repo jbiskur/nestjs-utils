@@ -39,8 +39,12 @@ export class ModuleOptions<TOptions> implements OnModuleInit {
 
     const discoveredOptions =
       await discoveryService.providers((provider) => {
-        this.foundModules.push(provider.name);
-        return optionsModuleMatch.test(provider.name)
+        if (typeof provider.name === "string") {
+          this.foundModules.push(provider.name);
+          return optionsModuleMatch.test(provider.name)
+        }
+
+        return false;
       });
 
     discoveredOptions.forEach(option => {
