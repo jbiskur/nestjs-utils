@@ -17,6 +17,7 @@ export interface ITestModuleBuilder {
   build(): TestingModuleBuilder | Promise<TestingModuleBuilder>;
   withModule(nestModule: NestJSModule): ITestModuleBuilder;
   withProvider(provider: Provider<unknown>): ITestModuleBuilder;
+  withRootProvider(provider: Provider<unknown>): ITestModuleBuilder;
 }
 
 export class TestModuleBuilder implements ITestModuleBuilder{
