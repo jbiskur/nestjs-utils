@@ -32,7 +32,6 @@ export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBui
 
   async buildAsMicroservice(options: MicroserviceOptions) {
     const testingModuleBuilder = await this.createTestingModule();
-
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestMicroservice<MicroserviceOptions>({
       ...testingModule,

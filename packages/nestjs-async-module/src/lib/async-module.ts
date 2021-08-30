@@ -56,7 +56,7 @@ export abstract class AsyncModule {
       imports: options && options.imports || [],
       providers: [
         ...optionsProvider,
-        ModuleOptions
+        ModuleOptions,
       ],
       controllers: [],
       exports: [],

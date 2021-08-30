@@ -1,4 +1,10 @@
-import { DynamicModule, ForwardReference, Provider, Type } from "@nestjs/common";
+import {
+  DynamicModule,
+  ForwardReference, Global,
+  Module,
+  Provider,
+  Type
+} from "@nestjs/common";
 import { Test, TestingModuleBuilder } from "@nestjs/testing";
 
 export type NestJSModule =
@@ -18,9 +24,15 @@ export class TestModuleBuilder implements ITestModuleBuilder{
   private providers: Provider<unknown>[] = [];
 
   build(): TestingModuleBuilder {
+    @Global()
+    @Module({
+      providers: [...this.providers],
+      exports: [...this.providers],
+    })
+    class TestModuleInjector {}
+
     return Test.createTestingModule({
-      imports: [...this.imports],
-      providers: [...this.providers]
+      imports: [...this.imports, TestModuleInjector]
     });
   }
 

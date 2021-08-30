@@ -1,9 +1,10 @@
 {
   "name": "@jbiskur/nestjs-async-module",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/jbiskur/nestjs-utils.git",
+    "type": "git",
+    "url": "https://github.com/jbiskur/nestjs-utils.git",
     "directory": "packages/nestjs-async-module"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "main": "src/index.ts"
 }

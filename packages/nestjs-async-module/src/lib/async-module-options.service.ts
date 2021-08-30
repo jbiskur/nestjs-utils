@@ -15,7 +15,6 @@ export const createOptionsToken = (token?: string) => {
 @Injectable()
 export class ModuleOptions<TOptions> implements OnModuleInit {
   public options: TOptions = {} as TOptions;
-  private foundModules: string[] = [];
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly moduleContainer: ModulesContainer
@@ -23,12 +22,12 @@ export class ModuleOptions<TOptions> implements OnModuleInit {
 
   get(): TOptions {
     if (Object.keys(this.options).length === 0) {
-      throw new NotFoundException(this.foundModules, "No module options has been found when they are requested");
+      throw new NotFoundException("No module options has been found when they are requested");
     }
     return this.options;
   }
 
-  async onModuleInit() {
+  async populateOptions() {
     const metadataScanner = await this.moduleRef.create(MetadataScanner);
     const discoveryService = new DiscoveryService(
       this.moduleContainer,
@@ -40,7 +39,6 @@ export class ModuleOptions<TOptions> implements OnModuleInit {
     const discoveredOptions =
       await discoveryService.providers((provider) => {
         if (typeof provider.name === "string") {
-          this.foundModules.push(provider.name);
           return optionsModuleMatch.test(provider.name)
         }
 
@@ -55,6 +53,10 @@ export class ModuleOptions<TOptions> implements OnModuleInit {
         }
       }
     });
+  }
+
+  async onModuleInit() {
+    await this.populateOptions();
   }
 
 
