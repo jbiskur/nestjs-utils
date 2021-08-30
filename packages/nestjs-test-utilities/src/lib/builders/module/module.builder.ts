@@ -22,6 +22,7 @@ export interface ITestModuleBuilder {
 export class TestModuleBuilder implements ITestModuleBuilder{
   private imports: NestJSModule[] = [];
   private providers: Provider<unknown>[] = [];
+  private rootProviders: Provider<unknown>[] = [];
 
   build(): TestingModuleBuilder {
     @Global()
@@ -32,7 +33,8 @@ export class TestModuleBuilder implements ITestModuleBuilder{
     class TestModuleInjector {}
 
     return Test.createTestingModule({
-      imports: [...this.imports, TestModuleInjector]
+      imports: [...this.imports, TestModuleInjector],
+      providers: [...this.rootProviders],
     });
   }
 
@@ -43,6 +45,11 @@ export class TestModuleBuilder implements ITestModuleBuilder{
 
   withProvider(provider: Provider<unknown>): this {
     this.providers.push(provider);
+    return this;
+  }
+
+  withRootProvider(provider: Provider<unknown>): this {
+    this.rootProviders.push(provider);
     return this;
   }
 }
