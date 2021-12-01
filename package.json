@@ -38,7 +38,10 @@
     "@golevelup/nestjs-discovery": "^2.3.1",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/testing": "7.6.13",
+    "@nestjs/testing": "8.0.0",
+    "@nestjs/microservices": "^8.0.0",
+    "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/schematics": "^8.0.0",
     "cross-fetch": "3.0.6",
     "nanoid": "^3.1.25",
     "reflect-metadata": "0.1.12",
@@ -50,12 +53,6 @@
     "@babel/preset-env": "7.9.6",
     "@babel/preset-react": "7.9.4",
     "@babel/preset-typescript": "7.9.0",
-    "@nestjs/common": "7.6.13",
-    "@nestjs/core": "7.6.13",
-    "@nestjs/microservices": "^7.6.14",
-    "@nestjs/platform-express": "7.6.13",
-    "@nestjs/schematics": "^8.0.0",
-    "@nestjs/testing": "^8.0.0",
     "@nrwl/cli": "13.2.3",
     "@nrwl/eslint-plugin-nx": "13.2.3",
     "@nrwl/jest": "13.2.3",
@@ -83,3 +80,4 @@
   },
   "version": "0.0.0"
 }
+
