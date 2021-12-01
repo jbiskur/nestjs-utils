@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import {
-  MicroserviceAController, MicroserviceTestingService
+  MicroserviceAController,
+  MicroserviceTestingService,
 } from "../test-data";
 
 @Module({
@@ -10,15 +11,14 @@ import {
 export class MicroserviceA {}
 
 @Module({
-  providers: [
-    MicroserviceTestingService
-  ],
+  providers: [MicroserviceTestingService],
   imports: [
     ClientsModule.register([
       {
-        name: "MATH_SERVICE", transport: Transport.TCP
-      }
-    ])
-  ]
+        name: "MATH_SERVICE",
+        transport: Transport.TCP,
+      },
+    ]),
+  ],
 })
 export class MicroserviceB {}

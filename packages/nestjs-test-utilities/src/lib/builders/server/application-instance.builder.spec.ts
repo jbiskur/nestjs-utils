@@ -3,9 +3,7 @@ import {
   ApplicationInstance,
   ApplicationInstanceBuilder,
 } from "./application-instance.builder";
-import {
-  NestApplicationBuilder,
-} from '../application';
+import { NestApplicationBuilder } from "../application";
 import {
   ModuleWithController,
   SERVICE_A_RESPONSE,

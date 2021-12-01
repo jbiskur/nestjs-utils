@@ -14,8 +14,8 @@ export class ExampleController {
 
 @Controller()
 export class MicroserviceAController {
-  @MessagePattern({cmd: "sum"})
+  @MessagePattern({ cmd: "sum" })
   accumulate(data: number[]): number {
-    return (data || []).reduce((a,b) => a + b);
+    return (data || []).reduce((a, b) => a + b);
   }
 }

@@ -27,9 +27,7 @@ export class ExtendedService {
 
 @Injectable()
 export class MicroserviceTestingService implements OnApplicationBootstrap {
-  constructor(
-    @Inject('MATH_SERVICE') private client: ClientProxy,
-  ) {}
+  constructor(@Inject("MATH_SERVICE") private client: ClientProxy) {}
 
   async onApplicationBootstrap() {
     await this.client.connect();

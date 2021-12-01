@@ -2,19 +2,22 @@
 
 The Options Module Factory provides a way to pass an options provider in the current import context by forcing the options provider to be resolved first. This is done through creating a module purely for containing and exporting the options provider.
 
-[TOC]: # "## Table of Contents"
+[toc]: # "## Table of Contents"
+
 - [Installation](#installation)
 - [Usage](#usage)
 
 ## Installation
+
 Install using npm.
 
-```npm  
+```npm
 npm install --save-dev @jbiskur/nestjs-options-module-factory
 ```
 
 using yarn.
-```yarn  
+
+```yarn
 yarn add --dev @jbiskur/nestjs-options-module-factory
 ```
 
@@ -27,7 +30,7 @@ The library provides a utility factory function that creates a module with the o
 import { createOptionsModule } from "@jbiskur/nestjs-options-module-factory";
 
 @Module({
-  providers: [InnerTestService]
+  providers: [InnerTestService],
 })
 class InnerTestModule extends createAsyncModule<Options>() {}
 
@@ -39,13 +42,18 @@ class TestModule extends AsyncModule {
     return this.doRegisterAsync(TestModule, null, null, {
       imports: [
         optionsModule,
-        InnerTestModule.registerAsync({
-          imports: [optionsModule],
-          inject: [OPTIONS_NAME],
-          useFactory: (outerOptions: Options) => ({ value: outerOptions.value })
-        }, InnerTestModule)
+        InnerTestModule.registerAsync(
+          {
+            imports: [optionsModule],
+            inject: [OPTIONS_NAME],
+            useFactory: (outerOptions: Options) => ({
+              value: outerOptions.value,
+            }),
+          },
+          InnerTestModule
+        ),
       ],
-      providers: [TestService]
+      providers: [TestService],
     });
   }
 }

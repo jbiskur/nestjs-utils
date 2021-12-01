@@ -13,11 +13,13 @@ export interface INestApplicationBuilderPlugin {
   run(appBuilder: NestApplicationBuilder): void;
 }
 
-export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBuilder> {
+export class NestApplicationBuilder<
+  T extends ITestModuleBuilder = TestModuleBuilder
+> {
   protected testModuleBuilder: ITestModuleBuilder;
   protected overrideProviders: OverrideProvider[] = [];
 
-  constructor(c?: (new () => T)) {
+  constructor(c?: new () => T) {
     this.testModuleBuilder = c ? new c() : new TestModuleBuilder();
   }
 
@@ -35,7 +37,7 @@ export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBui
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestMicroservice<MicroserviceOptions>({
       ...testingModule,
-      ...options
+      ...options,
     });
     await app.listenAsync();
     console.log("microservice is listening");
@@ -79,12 +81,14 @@ export class NestApplicationBuilder<T extends ITestModuleBuilder = TestModuleBui
     return this;
   }
 
-  with<T extends INestApplicationBuilderPlugin>(plugin: { new (): T }, pluginBuilder: (builder: T) => T = null): this {
+  with<T extends INestApplicationBuilderPlugin>(
+    plugin: { new (): T },
+    pluginBuilder: (builder: T) => T = null
+  ): this {
     if (pluginBuilder) {
       const pluginInstance = pluginBuilder(new plugin());
       pluginInstance.run(this);
-    }
-    else {
+    } else {
       new plugin().run(this);
     }
     return this;

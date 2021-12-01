@@ -7,7 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project: [nestjs-test-utilities, nestjs-async-module, nestjs-options-module-factory]
+        project:
+          [
+            nestjs-test-utilities,
+            nestjs-async-module,
+            nestjs-options-module-factory,
+          ]
 
     steps:
       - name: Git Checkout
@@ -17,8 +22,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@jbiskur'
+          registry-url: "https://registry.npmjs.org"
+          scope: "@jbiskur"
 
       - name: Added node cache
         uses: egordm/gha-yarn-node-cache@v1

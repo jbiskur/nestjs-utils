@@ -1,9 +1,10 @@
 import {
   DynamicModule,
-  ForwardReference, Global,
+  ForwardReference,
+  Global,
   Module,
   Provider,
-  Type
+  Type,
 } from "@nestjs/common";
 import { Test, TestingModuleBuilder } from "@nestjs/testing";
 
@@ -20,7 +21,7 @@ export interface ITestModuleBuilder {
   withRootProvider(provider: Provider<unknown>): ITestModuleBuilder;
 }
 
-export class TestModuleBuilder implements ITestModuleBuilder{
+export class TestModuleBuilder implements ITestModuleBuilder {
   private imports: NestJSModule[] = [];
   private providers: Provider<unknown>[] = [];
   private rootProviders: Provider<unknown>[] = [];

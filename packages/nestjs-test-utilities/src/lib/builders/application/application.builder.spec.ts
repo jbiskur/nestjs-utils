@@ -2,17 +2,18 @@ import { INestApplication, INestMicroservice } from "@nestjs/common";
 import {
   INestApplicationBuilderPlugin,
   NestApplicationBuilder,
-} from './application.builder';
+} from "./application.builder";
 import {
   ExtendedModule,
   TestModuleA,
   TestModuleB,
 } from "../test-data/test-module.data";
 import {
-  ExtendedService, MicroserviceTestingService,
+  ExtendedService,
+  MicroserviceTestingService,
   SERVICE_B_RESPONSE,
   TestServiceA,
-  TestServiceB
+  TestServiceB,
 } from "../test-data/test-service.data";
 import { Transport } from "@nestjs/microservices";
 import { MicroserviceA, MicroserviceB } from "../test-data/";
@@ -101,7 +102,7 @@ describe("Application Builder", () => {
 
     class GraphQL implements INestApplicationBuilderPlugin {
       run(appBuilder: NestApplicationBuilder): void {
-        appBuilder.withTestModule(builder => builder.withModule(TestModuleB));
+        appBuilder.withTestModule((builder) => builder.withModule(TestModuleB));
       }
 
       withOptions(): this {
@@ -111,15 +112,13 @@ describe("Application Builder", () => {
 
     class TypeORMConnection implements INestApplicationBuilderPlugin {
       run(appBuilder: NestApplicationBuilder): void {
-        appBuilder.withTestModule(builder => builder.withModule(TestModuleB));
+        appBuilder.withTestModule((builder) => builder.withModule(TestModuleB));
       }
     }
 
     class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
       withExtendedModuleA(): this {
-        this.withTestModule((builder) =>
-          builder.withModule(ExtendedModule)
-        );
+        this.withTestModule((builder) => builder.withModule(ExtendedModule));
         return this;
       }
     }
@@ -128,7 +127,7 @@ describe("Application Builder", () => {
       app = await new ExtendedNestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
         .withExtendedModuleA()
-        .with(GraphQL, builder => builder.withOptions())
+        .with(GraphQL, (builder) => builder.withOptions())
         .with(TypeORMConnection)
         .build();
 
@@ -174,7 +173,7 @@ describe("should work to build as microservice", () => {
 
   afterAll(async () => {
     await microservice.close();
-  })
+  });
 
   beforeEach(async () => {
     app = await new NestApplicationBuilder()
@@ -189,6 +188,6 @@ describe("should work to build as microservice", () => {
   it("should get message through nest microservice", async () => {
     const sut = await app.resolve(MicroserviceTestingService);
 
-    expect(sut.sum([1,2,3,4,5])).toBe(15);
-  })
+    expect(sut.sum([1, 2, 3, 4, 5])).toBe(15);
+  });
 });

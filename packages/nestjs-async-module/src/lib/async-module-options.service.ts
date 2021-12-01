@@ -10,7 +10,7 @@ export const createOptionsToken = (token?: string) => {
   }
 
   return `${nanoid().toUpperCase()}_OPTIONS`;
-}
+};
 
 @Injectable()
 export class ModuleOptions<TOptions> implements OnModuleInit {
@@ -22,7 +22,9 @@ export class ModuleOptions<TOptions> implements OnModuleInit {
 
   get(): TOptions {
     if (Object.keys(this.options).length === 0) {
-      throw new NotFoundException("No module options has been found when they are requested");
+      throw new NotFoundException(
+        "No module options has been found when they are requested"
+      );
     }
     return this.options;
   }
@@ -36,21 +38,20 @@ export class ModuleOptions<TOptions> implements OnModuleInit {
 
     const optionsModuleMatch = new RegExp("_OPTIONS");
 
-    const discoveredOptions =
-      await discoveryService.providers((provider) => {
-        if (typeof provider.name === "string") {
-          return optionsModuleMatch.test(provider.name)
-        }
+    const discoveredOptions = await discoveryService.providers((provider) => {
+      if (typeof provider.name === "string") {
+        return optionsModuleMatch.test(provider.name);
+      }
 
-        return false;
-      });
+      return false;
+    });
 
-    discoveredOptions.forEach(option => {
+    discoveredOptions.forEach((option) => {
       if (typeof option.instance === "object") {
         this.options = {
           ...this.options,
-          ...option.instance
-        }
+          ...option.instance,
+        };
       }
     });
   }
@@ -58,6 +59,4 @@ export class ModuleOptions<TOptions> implements OnModuleInit {
   async onModuleInit() {
     await this.populateOptions();
   }
-
-
 }

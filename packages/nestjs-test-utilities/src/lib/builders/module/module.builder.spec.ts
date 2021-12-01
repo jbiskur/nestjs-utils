@@ -42,5 +42,5 @@ describe("Module Builder", () => {
     expect(await serviceB.helloFromB()).toBe(SERVICE_B_RESPONSE);
 
     expect(serviceC).toBeDefined();
-  })
+  });
 });

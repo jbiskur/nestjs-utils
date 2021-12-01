@@ -2,9 +2,10 @@
 
 The test utilities contain a set of builders that should speed up testing using method chaining and make the tests more descriptive.
 
-[TOC]: # "## Table of Contents"
+[toc]: # "## Table of Contents"
 
 ## Table of Contents
+
 - [Installation](#installation)
 - [Usage](#usage)
   - [Module](#module)
@@ -12,16 +13,17 @@ The test utilities contain a set of builders that should speed up testing using 
   - [Application Instance](#application-instance)
   - [Plugins](#plugins)
 
-
 ## Installation
+
 Install using npm.
 
-```npm  
+```npm
 npm install --save-dev @jbiskur/nestjs-test-utilities
 ```
 
 using yarn.
-```yarn  
+
+```yarn
 yarn add --dev @jbiskur/nestjs-test-utilities
 ```
 
@@ -54,6 +56,7 @@ describe("Simple Example", () => {
 `withModule()` can be chained after each other to import additional modules, after the `build()` method is called a normal TestingModule is returned, so methods like `overrideProvider()` can be chained before the final `compile()` command.
 
 ### Application
+
 A more useful feature of this library is the usage of the Application Builder. This creates a full NestJS application and initializes it so that all life-cycle methods are executed. Underneath the standard [@nestjs/testing](https://www.npmjs.com/package/@nestjs/testing) library is used.
 
 ```typescript
@@ -90,6 +93,7 @@ describe("e2e test of module", () => {
 the code above ensures that the full life-cycle methods in `TestModuleA` are called.
 
 A more complete example using overrides to mock data for specific services.
+
 ```typescript
 import { INestApplication } from "@nestjs/common";
 import {
@@ -116,7 +120,7 @@ describe("Example overrides using jest Mock", () => {
         // remember to close the application
         await app.close();
     });
-    
+
     it("should work to override a provider using class", async () => {
       app = await new NestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
@@ -135,7 +139,7 @@ describe("Example overrides using jest Mock", () => {
 A powerful way to simplify the testing in your apps or libraries, especially in a mono-repo configuration, is to extend the application builder to configure certain modules with a single method call for generic features such as database connections, graphql setup and loggers, as the example below illustrates.
 
 ```typescript
-import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule } from "@nestjs/graphql";
 //...import logger
 //...import typeorm
 
@@ -143,7 +147,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
   withGraphQLModule(): this {
     this.withTestModule((builder) =>
-      builder.withModule(GraphQLModule.registerAsync({autoSchemaFile:true}))
+      builder.withModule(GraphQLModule.registerAsync({ autoSchemaFile: true }))
     );
     return this;
   }
@@ -154,7 +158,7 @@ class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
     );
     return this;
   }
-  
+
   withTypeORMConnection(): this {
     this.withTestModule((builder) =>
       builder.withModule(/* ...fx sql-lite in-memory database */)
@@ -186,6 +190,7 @@ it("should work to extend the builder", async () => {
 this way the tests are setup consistently throughout the test suite.
 
 ### Application Instance
+
 The last builder that is provided is a way to wrap the application builder in an instance builder. This creates a full server than can be queried on localhost.
 
 ```typescript
@@ -264,7 +269,7 @@ using an extended builder this can be simplified even more if some service is co
 ```typescript
 class ExtendedNestApplicationBuilder extends NestApplicationBuilder {
   // ...other extended methods
-  
+
   withOverriddenTestServiceA(): this {
     this.withOverrideProvider(TestServiceA, (overrideWith) =>
       overrideWith.useValue(MockedServiceA.object())
@@ -286,9 +291,11 @@ beforeAll(async () => {
 ```
 
 ### Plugins
+
 the test builder supports plugins that can be used to share common builder patterns.
 
 A plugin can be developed by extending the following interface
+
 ```typescript
 export interface INestApplicationBuilderPlugin {
   run(appBuilder: NestApplicationBuilder): void;
@@ -298,42 +305,47 @@ export interface INestApplicationBuilderPlugin {
 An example graphql module plugin:
 
 ```typescript
-import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLModule } from "@nestjs/graphql";
 
 class GraphQL implements INestApplicationBuilderPlugin {
   private options: GraphQLOptions = {
-    autoSchemaFile: true
+    autoSchemaFile: true,
   };
-  
+
   withPlayground(): this {
-    options.playground = true;   
+    options.playground = true;
     return this;
   }
-  
+
   withProduction(): this {
     options.production = true;
   }
-  
+
   // is executed last by the Application Builder
   run(appBuilder: NestApplicationBuilder): void {
-    appBuilder.withTestModule(builder => builder.withModule(GraphQLModule.registerAsync(this.options)));
+    appBuilder.withTestModule((builder) =>
+      builder.withModule(GraphQLModule.registerAsync(this.options))
+    );
   }
 }
 ```
 
 and using it with no options
+
 ```typescript
 app = await new NestApplicationBuilder()
-    .withTestModule((builder) => builder.withModule(TestModuleA))
-    .with(GraphQL)
-    .build();
+  .withTestModule((builder) => builder.withModule(TestModuleA))
+  .with(GraphQL)
+  .build();
 ```
+
 with options
+
 ```typescript
 app = await new NestApplicationBuilder()
-    .withTestModule((builder) => builder.withModule(TestModuleA))
-    .with(GraphQL, (plugin) => plugin.withPlayground().withProduction())
-    .build();
+  .withTestModule((builder) => builder.withModule(TestModuleA))
+  .with(GraphQL, (plugin) => plugin.withPlayground().withProduction())
+  .build();
 ```
 
 When sharing **NestApplicationBuilderPlugins** on npm, please use the following naming convention
@@ -345,16 +357,18 @@ for example using it to test [nest-commander](https://www.npmjs.com/package/nest
 
 first, add the packages
 
-```npm  
+```npm
 npm install --save nest-commander && npm install --save-dev nest-commander-testing
 ```
 
 using yarn.
-```yarn  
+
+```yarn
 yarn add nest-commander && yarn add --dev nest-commander-testing
 ```
 
 then implement your own builder like this:
+
 ```typescript
 import {
   ITestModuleBuilder,
@@ -383,16 +397,13 @@ export class TestCommandBuilder implements ITestModuleBuilder {
   }
 }
 ```
+
 then to use it properly with nest-commander-testing extend the nestjs application builder
 
 ```typescript
-import {
-  NestApplicationBuilder
-} from "@jbiskur/nestjs-test-utilities";
+import { NestApplicationBuilder } from "@jbiskur/nestjs-test-utilities";
 
-export class GTCommandInstanceBuilder extends NestApplicationBuilder<
-  TestCommandBuilder
-> {
+export class GTCommandInstanceBuilder extends NestApplicationBuilder<TestCommandBuilder> {
   constructor() {
     super(TestCommandBuilder);
   }
@@ -407,14 +418,17 @@ export class GTCommandInstanceBuilder extends NestApplicationBuilder<
 ```
 
 it can then be used normally
+
 ```typescript
 commandInstance = await new GTCommandInstanceBuilder()
-      .withTestModule((builder) => builder.withModule({
-        imports:[AppModule]
-      }))
-      .with(LogModulePlugin)
-      .withOverrideProvider(SomeService, (overrideWith) =>
-        overrideWith.useValue(someMockedService)
-      )
-      .buildCommandInstance();
+  .withTestModule((builder) =>
+    builder.withModule({
+      imports: [AppModule],
+    })
+  )
+  .with(LogModulePlugin)
+  .withOverrideProvider(SomeService, (overrideWith) =>
+    overrideWith.useValue(someMockedService)
+  )
+  .buildCommandInstance();
 ```

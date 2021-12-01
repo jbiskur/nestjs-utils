@@ -4,10 +4,13 @@ import {
   DynamicModule,
   INestApplication,
   Injectable,
-  Module
+  Module,
 } from "@nestjs/common";
 import { AsyncOptions } from "./interfaces";
-import { NestApplicationBuilder, TestModuleA } from "@jbiskur/nestjs-test-utilities";
+import {
+  NestApplicationBuilder,
+  TestModuleA,
+} from "@jbiskur/nestjs-test-utilities";
 import { createOptionsToken, ModuleOptions } from "./";
 
 interface ExampleOptions {
@@ -18,9 +21,7 @@ const PROVIDER_OPTIONS_NAME = "EXAMPLE_OPTIONS_PROVIDER";
 
 @Injectable()
 class ExampleService {
-  constructor(
-    private readonly options: ModuleOptions<ExampleOptions>,
-  ) {}
+  constructor(private readonly options: ModuleOptions<ExampleOptions>) {}
 
   testOptions() {
     return this.options.get().name;
@@ -32,7 +33,7 @@ const EXAMPLE_MESSAGE = "hello world";
 @Module({})
 class ExampleAsyncModule extends AsyncModule {
   public static registerAsync<ExampleOptions>(
-    options: AsyncOptions<ExampleOptions>,
+    options: AsyncOptions<ExampleOptions>
   ): DynamicModule {
     return {
       ...this.doRegisterAsync<ExampleOptions>(
@@ -40,16 +41,16 @@ class ExampleAsyncModule extends AsyncModule {
         PROVIDER_OPTIONS_NAME,
         options,
         {
-          providers: [ExampleService]
-        },
-      )
+          providers: [ExampleService],
+        }
+      ),
     };
   }
 }
 
 async function TestOptionsReturnMessage(app: INestApplication) {
   expect((await app.resolve(ExampleService)).testOptions()).toBe(
-    EXAMPLE_MESSAGE,
+    EXAMPLE_MESSAGE
   );
 }
 
@@ -63,8 +64,8 @@ describe("Simple Async Module", () => {
         testModule.withModule(
           ExampleAsyncModule.registerAsync({
             useFactory: () => ({ name: EXAMPLE_MESSAGE }),
-          }),
-        ),
+          })
+        )
       )
       .build();
 
@@ -95,14 +96,14 @@ class TestController {}
 })
 class ExampleMetadataAsyncModule extends AsyncModule {
   public static registerAsync<ExampleOptions>(
-    options: AsyncOptions<ExampleOptions>,
+    options: AsyncOptions<ExampleOptions>
   ): DynamicModule {
     return {
       ...this.doRegisterAsync<ExampleOptions>(
         ExampleAsyncModule,
         PROVIDER_OPTIONS_NAME,
         options
-      )
+      ),
     };
   }
 }
@@ -119,8 +120,8 @@ describe("Simple Async module using metadata and doRegisterAsync", () => {
         testModule.withModule(
           ExampleMetadataAsyncModule.registerAsync({
             useFactory: () => ({ name: EXAMPLE_MESSAGE }),
-          }),
-        ),
+          })
+        )
       )
       .build();
 
@@ -151,7 +152,9 @@ describe("Simple Async module using metadata and doRegisterAsync", () => {
   controllers: [TestController],
 })
 class ExampleMetadataOnly extends createAsyncModule<ExampleOptions>() {
-  public static registerAsync(options: AsyncOptions<ExampleOptions>): DynamicModule {
+  public static registerAsync(
+    options: AsyncOptions<ExampleOptions>
+  ): DynamicModule {
     return super.registerAsync(options, ExampleMetadataOnly);
   }
 }
@@ -168,8 +171,8 @@ describe("Simple Async module using only metadata", () => {
         testModule.withModule(
           ExampleMetadataOnly.registerAsync({
             useFactory: () => ({ name: EXAMPLE_MESSAGE }),
-          }),
-        ),
+          })
+        )
       )
       .build();
 
@@ -189,9 +192,7 @@ describe("Simple Async module using only metadata", () => {
   });
 
   it("should return hello world from service", async () => {
-    expect(exampleModule.testOptions()).toBe(
-      EXAMPLE_MESSAGE,
-    );
+    expect(exampleModule.testOptions()).toBe(EXAMPLE_MESSAGE);
   });
 });
 
@@ -218,7 +219,7 @@ class ExampleHelloService {
 class ExternalModule {}
 
 @Module({
-  providers: [ExampleHelloService]
+  providers: [ExampleHelloService],
 })
 class NoOptionsModule extends createAsyncModule() {
   public static registerAsync(options: AsyncOptions<unknown>): DynamicModule {
@@ -236,9 +237,9 @@ describe("Simple Async Module No Options", () => {
         testModule.withModule(
           NoOptionsModule.registerAsync({
             imports: [ExternalModule],
-            inject: [MessageService]
-          }),
-        ),
+            inject: [MessageService],
+          })
+        )
       )
       .build();
 
@@ -274,19 +275,22 @@ const optionsToken = createOptionsToken();
     {
       provide: ExampleInlineService,
       inject: [optionsToken],
-      useFactory: (options: ExampleOptions) => new ExampleInlineService(options.name)
-    }
-  ]
+      useFactory: (options: ExampleOptions) =>
+        new ExampleInlineService(options.name),
+    },
+  ],
 })
-class ExampleSameScopeModule extends createAsyncModule<ExampleOptions>(optionsToken) {
-  public static registerAsync(options: AsyncOptions<ExampleOptions>): DynamicModule {
+class ExampleSameScopeModule extends createAsyncModule<ExampleOptions>(
+  optionsToken
+) {
+  public static registerAsync(
+    options: AsyncOptions<ExampleOptions>
+  ): DynamicModule {
     return super.registerAsync(options, ExampleSameScopeModule);
   }
 }
 
 describe("Simple Async Module that injects options in the same scope using provide", () => {
-
-
   let sut: ExampleInlineService;
   let app: INestApplication;
 
@@ -296,8 +300,8 @@ describe("Simple Async Module that injects options in the same scope using provi
         testModule.withModule(
           ExampleSameScopeModule.registerAsync({
             useFactory: () => ({ name: EXAMPLE_MESSAGE }),
-          }),
-        ),
+          })
+        )
       )
       .build();
 
