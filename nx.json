@@ -18,23 +18,24 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
+        "parallel": 1
       }
-    }
-  },
-  "projects": {
-    "nestjs-test-utilities": {
-      "tags": []
-    },
-    "nestjs-async-module": {
-      "tags": []
-    },
-    "nestjs-options-module-factory": {
-      "tags": []
     }
   },
   "workspaceLayout": {
     "appsDir": "packages",
     "libsDir": "packages"
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/node"
+  },
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
   }
 }

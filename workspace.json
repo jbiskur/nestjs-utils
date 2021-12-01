@@ -1,47 +1,6 @@
 {
   "version": 1,
   "projects": {
-    "nestjs-test-utilities": {
-      "root": "packages/nestjs-test-utilities",
-      "sourceRoot": "packages/nestjs-test-utilities/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["packages/nestjs-test-utilities/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "packages/nestjs-test-utilities/jest.config.js",
-            "passWithNoTests": true
-          }
-        },
-        "build": {
-          "builder": "@nrwl/node:package",
-          "options": {
-            "outputPath": "dist/packages/nestjs-test-utilities",
-            "tsConfig": "packages/nestjs-test-utilities/tsconfig.lib.json",
-            "packageJson": "packages/nestjs-test-utilities/package.json",
-            "main": "packages/nestjs-test-utilities/src/index.ts",
-            "assets": ["packages/nestjs-test-utilities/*.md"]
-          }
-        },
-        "publish": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              "echo $GITHUB_REF",
-              "yarn publish --cwd ./dist/packages/nestjs-test-utilities --new-version $GITHUB_REF --no-git-tag-version --access public"
-            ],
-            "parallel": false
-          }
-        }
-      }
-    },
     "nestjs-async-module": {
       "root": "packages/nestjs-async-module",
       "sourceRoot": "packages/nestjs-async-module/src",
@@ -52,14 +11,16 @@
           "builder": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["packages/nestjs-async-module/**/*.ts"]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "packages/nestjs-async-module/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": ["coverage/packages/nestjs-async-module"]
         },
         "build": {
           "builder": "@nrwl/node:package",
@@ -69,9 +30,11 @@
             "packageJson": "packages/nestjs-async-module/package.json",
             "main": "packages/nestjs-async-module/src/index.ts",
             "assets": ["packages/nestjs-async-module/*.md"]
-          }
+          },
+          "outputs": ["{options.outputPath}"]
         }
-      }
+      },
+      "tags": []
     },
     "nestjs-options-module-factory": {
       "root": "packages/nestjs-options-module-factory",
@@ -85,14 +48,16 @@
             "lintFilePatterns": [
               "packages/nestjs-options-module-factory/**/*.ts"
             ]
-          }
+          },
+          "outputs": ["{options.outputFile}"]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "packages/nestjs-options-module-factory/jest.config.js",
             "passWithNoTests": true
-          }
+          },
+          "outputs": ["coverage/packages/nestjs-options-module-factory"]
         },
         "build": {
           "builder": "@nrwl/node:package",
@@ -102,12 +67,56 @@
             "packageJson": "packages/nestjs-options-module-factory/package.json",
             "main": "packages/nestjs-options-module-factory/src/index.ts",
             "assets": ["packages/nestjs-options-module-factory/*.md"]
+          },
+          "outputs": ["{options.outputPath}"]
+        }
+      },
+      "tags": []
+    },
+    "nestjs-test-utilities": {
+      "root": "packages/nestjs-test-utilities",
+      "sourceRoot": "packages/nestjs-test-utilities/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["packages/nestjs-test-utilities/**/*.ts"]
+          },
+          "outputs": ["{options.outputFile}"]
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "packages/nestjs-test-utilities/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/packages/nestjs-test-utilities"]
+        },
+        "build": {
+          "builder": "@nrwl/node:package",
+          "options": {
+            "outputPath": "dist/packages/nestjs-test-utilities",
+            "tsConfig": "packages/nestjs-test-utilities/tsconfig.lib.json",
+            "packageJson": "packages/nestjs-test-utilities/package.json",
+            "main": "packages/nestjs-test-utilities/src/index.ts",
+            "assets": ["packages/nestjs-test-utilities/*.md"]
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "publish": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "echo $GITHUB_REF",
+              "yarn publish --cwd ./dist/packages/nestjs-test-utilities --new-version $GITHUB_REF --no-git-tag-version --access public"
+            ],
+            "parallel": false
           }
         }
-      }
+      },
+      "tags": []
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/node"
   }
 }

@@ -17,14 +17,14 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@jbiskur/nestjs-test-utilities": [
-        "packages/nestjs-test-utilities/src/index.ts"
-      ],
       "@jbiskur/nestjs-async-module": [
         "packages/nestjs-async-module/src/index.ts"
       ],
       "@jbiskur/nestjs-options-module-factory": [
         "packages/nestjs-options-module-factory/src/index.ts"
+      ],
+      "@jbiskur/nestjs-test-utilities": [
+        "packages/nestjs-test-utilities/src/index.ts"
       ]
     }
   },
