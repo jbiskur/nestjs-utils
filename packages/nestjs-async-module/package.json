@@ -8,6 +8,7 @@
   "license": "MIT",
   "main": "src/index.ts",
   "peerDependencies": {
+    "@jbiskur/nestjs-test-utilities": "^3.2.2",
     "@nestjs/testing": "^8.0.0",
     "tslib": "^2.0.0"
   }

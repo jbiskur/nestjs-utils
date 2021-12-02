@@ -7,6 +7,8 @@
   },
   "license": "MIT",
   "peerDependencies": {
+    "@jbiskur/nestjs-async-module": "^3.2.2",
+    "@jbiskur/nestjs-test-utilities": "^3.2.2",
     "@nestjs/testing": "^8.0.0",
     "tslib": "^2.0.0"
   }
