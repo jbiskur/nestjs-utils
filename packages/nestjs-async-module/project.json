@@ -1,0 +1,35 @@
+{
+  "root": "packages/nestjs-async-module",
+  "sourceRoot": "packages/nestjs-async-module/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/nestjs-async-module/**/*.ts"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "packages/nestjs-async-module/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/packages/nestjs-async-module"]
+    },
+    "build": {
+      "executor": "@nrwl/node:package",
+      "options": {
+        "outputPath": "dist/packages/nestjs-async-module",
+        "tsConfig": "packages/nestjs-async-module/tsconfig.lib.json",
+        "packageJson": "packages/nestjs-async-module/package.json",
+        "main": "packages/nestjs-async-module/src/index.ts",
+        "assets": ["packages/nestjs-async-module/*.md"]
+      },
+      "outputs": ["{options.outputPath}"]
+    }
+  },
+  "tags": []
+}

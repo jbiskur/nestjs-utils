@@ -1,0 +1,35 @@
+{
+  "root": "packages/nestjs-options-module-factory",
+  "sourceRoot": "packages/nestjs-options-module-factory/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/nestjs-options-module-factory/**/*.ts"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "packages/nestjs-options-module-factory/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/packages/nestjs-options-module-factory"]
+    },
+    "build": {
+      "executor": "@nrwl/node:package",
+      "options": {
+        "outputPath": "dist/packages/nestjs-options-module-factory",
+        "tsConfig": "packages/nestjs-options-module-factory/tsconfig.lib.json",
+        "packageJson": "packages/nestjs-options-module-factory/package.json",
+        "main": "packages/nestjs-options-module-factory/src/index.ts",
+        "assets": ["packages/nestjs-options-module-factory/*.md"]
+      },
+      "outputs": ["{options.outputPath}"]
+    }
+  },
+  "tags": []
+}

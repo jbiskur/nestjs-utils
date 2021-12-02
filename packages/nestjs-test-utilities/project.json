@@ -1,0 +1,45 @@
+{
+  "root": "packages/nestjs-test-utilities",
+  "sourceRoot": "packages/nestjs-test-utilities/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["packages/nestjs-test-utilities/**/*.ts"]
+      },
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "options": {
+        "jestConfig": "packages/nestjs-test-utilities/jest.config.js",
+        "passWithNoTests": true
+      },
+      "outputs": ["coverage/packages/nestjs-test-utilities"]
+    },
+    "build": {
+      "executor": "@nrwl/node:package",
+      "options": {
+        "outputPath": "dist/packages/nestjs-test-utilities",
+        "tsConfig": "packages/nestjs-test-utilities/tsconfig.lib.json",
+        "packageJson": "packages/nestjs-test-utilities/package.json",
+        "main": "packages/nestjs-test-utilities/src/index.ts",
+        "assets": ["packages/nestjs-test-utilities/*.md"]
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "echo $GITHUB_REF",
+          "yarn publish --cwd ./dist/packages/nestjs-test-utilities --new-version $GITHUB_REF --no-git-tag-version --access public"
+        ],
+        "parallel": false
+      }
+    }
+  },
+  "tags": []
+}
