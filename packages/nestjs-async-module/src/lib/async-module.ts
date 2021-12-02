@@ -1,7 +1,6 @@
 import { DynamicModule, Provider, Type } from "@nestjs/common";
 import { AsyncOptions } from "./interfaces";
 import { ModuleMetadata } from "@nestjs/common/interfaces";
-import _ from "lodash";
 import {
   createOptionsToken,
   ModuleOptions,
