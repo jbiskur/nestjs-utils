@@ -75,57 +75,38 @@ export abstract class AsyncModule {
       exports: [],
     };
 
-    const importsMeta: Pick<ModuleMetadata, "imports"> = {
-      imports: Reflect.getMetadata("imports", this) ?? [],
-    };
-    const providersMeta: Pick<ModuleMetadata, "providers"> = {
-      providers: Reflect.getMetadata("providers", this) ?? [],
-    };
-    const controllersMeta: Pick<ModuleMetadata, "controllers"> = {
-      controllers: Reflect.getMetadata("controllers", this) ?? [],
-    };
-    const exportsMeta: Pick<ModuleMetadata, "exports"> = {
-      exports: Reflect.getMetadata("exports", this) ?? [],
-    };
-
-    if (dynamic?.imports != undefined)
-    {
-      moduleObject.imports?.push(...dynamic.imports);
+    if (Reflect.getMetadata("imports", this)) {
+      moduleObject.imports?.push(...Reflect.getMetadata("imports", this))
     }
 
-    if (dynamic?.providers != undefined)
-    {
-      moduleObject.providers?.push(...dynamic.providers);
+    if (Reflect.getMetadata("providers", this)) {
+      moduleObject.providers?.push(...Reflect.getMetadata("providers", this))
     }
 
-    if (dynamic?.controllers != undefined)
-    {
-      moduleObject.controllers?.push(...dynamic.controllers);
+    if (Reflect.getMetadata("controllers", this)) {
+      moduleObject.controllers?.push(...Reflect.getMetadata("controllers", this))
     }
 
-    if (dynamic?.exports != undefined)
-    {
-      moduleObject.exports?.push(...dynamic.exports);
+    if (Reflect.getMetadata("exports", this)) {
+      moduleObject.exports?.push(...Reflect.getMetadata("exports", this))
     }
 
-    if (importsMeta.imports != undefined)
-    {
-      moduleObject.imports?.push(...importsMeta.imports);
-    }
+    if (dynamic) {
+      if (dynamic.imports?.length) {
+        moduleObject.imports?.push(...dynamic.imports);
+      }
 
-    if (providersMeta.providers != undefined)
-    {
-      moduleObject.providers?.push(...providersMeta.providers);
-    }
+      if (dynamic.providers?.length) {
+        moduleObject.providers?.push(...dynamic.providers);
+      }
 
-    if (controllersMeta.controllers != undefined)
-    {
-      moduleObject.controllers?.push(...controllersMeta.controllers);
-    }
+      if (dynamic.controllers?.length) {
+        moduleObject.controllers?.push(...dynamic.controllers);
+      }
 
-    if (exportsMeta.exports != undefined)
-    {
-      moduleObject.exports?.push(...exportsMeta.exports);
+      if (dynamic.exports?.length) {
+        moduleObject.exports?.push(...dynamic.exports);
+      }
     }
 
     return moduleObject;
