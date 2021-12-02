@@ -6,5 +6,9 @@
     "directory": "packages/nestjs-test-utilities"
   },
   "license": "MIT",
-  "main": "src/index.ts"
+  "main": "src/index.ts",
+  "peerDependencies": {
+    "@nestjs/testing": "^8.0.0",
+    "tslib": "^2.0.0"
+  }
 }
