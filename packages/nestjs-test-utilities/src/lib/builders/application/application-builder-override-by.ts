@@ -3,13 +3,13 @@ import { OverrideBy, OverrideByFactoryOptions } from "@nestjs/testing";
 export type OverrideFunction = (value: OverrideBy) => void;
 
 export class ApplicationBuilderOverrideBy {
-  private override: OverrideFunction = null;
+  private override: OverrideFunction | null = null;
 
   constructor() {
     this.override = null;
   }
 
-  get overriddenWith(): OverrideFunction {
+  get overriddenWith(): OverrideFunction | null {
     return this.override;
   }
 

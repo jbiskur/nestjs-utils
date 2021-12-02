@@ -5,10 +5,5 @@
     "url": "https://github.com/jbiskur/nestjs-utils.git",
     "directory": "packages/nestjs-async-module"
   },
-  "license": "MIT",
-  "main": "src/index.ts",
-  "peerDependencies": {
-    "@nestjs/testing": "^8.0.0",
-    "tslib": "^2.0.0"
-  }
+  "license": "MIT"
 }

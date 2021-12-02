@@ -28,12 +28,12 @@ export interface IAsyncModule<TOptions, COptions = unknown> {
 }
 
 export const createAsyncModule = <TOptions = unknown>(
-  optionsProviderName: string = null
+  optionsProviderName?: string
 ) => {
   abstract class AsyncModuleDynamic extends AsyncModule {
     public static registerAsync(
       options: AsyncOptions<TOptions>,
-      type?: Type
+      type: Type
     ): DynamicModule {
       return this.doRegisterAsync(
         type,
@@ -50,13 +50,13 @@ export abstract class AsyncModule {
   // eslint-disable-next-line
   protected static doRegisterAsync<TOptions>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    module: Type<any>,
-    constProviderName: string = null,
+    module: Type,
+    constProviderName: string,
     options: Pick<
       AsyncOptions<TOptions>,
       "imports" | "useFactory" | "inject"
     > | null = null,
-    dynamic: ModuleMetadata = null
+    dynamic?: ModuleMetadata
   ): DynamicModule {
     const optionsProvider: Provider[] = [];
 
@@ -70,45 +70,64 @@ export abstract class AsyncModule {
 
     const moduleObject: DynamicModule = {
       module,
-      imports: (options && options.imports) || [],
+      imports: options?.imports ?? [],
       providers: [...optionsProvider, ModuleOptions],
       controllers: [],
       exports: [],
     };
 
     const importsMeta: Pick<ModuleMetadata, "imports"> = {
-      imports: Reflect.getMetadata("imports", this),
+      imports: Reflect.getMetadata("imports", this) ?? [],
     };
     const providersMeta: Pick<ModuleMetadata, "providers"> = {
-      providers: Reflect.getMetadata("providers", this),
+      providers: Reflect.getMetadata("providers", this) ?? [],
     };
     const controllersMeta: Pick<ModuleMetadata, "controllers"> = {
-      controllers: Reflect.getMetadata("controllers", this),
+      controllers: Reflect.getMetadata("controllers", this) ?? [],
     };
     const exportsMeta: Pick<ModuleMetadata, "exports"> = {
-      exports: Reflect.getMetadata("exports", this),
+      exports: Reflect.getMetadata("exports", this) ?? [],
     };
 
-    moduleObject.imports = _.concat(
-      moduleObject.imports,
-      dynamic?.imports && dynamic.imports,
-      importsMeta.imports
-    ).filter(Boolean);
-    moduleObject.providers = _.concat(
-      moduleObject.providers,
-      dynamic?.providers && dynamic.providers,
-      providersMeta.providers
-    ).filter(Boolean);
-    moduleObject.controllers = _.concat(
-      moduleObject.controllers,
-      dynamic?.controllers && dynamic.controllers,
-      controllersMeta.controllers
-    ).filter(Boolean);
-    moduleObject.exports = _.concat(
-      moduleObject.exports,
-      dynamic?.exports && dynamic.exports,
-      exportsMeta.exports
-    ).filter(Boolean);
+    if (dynamic?.imports != undefined)
+    {
+      moduleObject.imports?.push(...dynamic.imports);
+    }
+
+    if (dynamic?.providers != undefined)
+    {
+      moduleObject.providers?.push(...dynamic.providers);
+    }
+
+    if (dynamic?.controllers != undefined)
+    {
+      moduleObject.controllers?.push(...dynamic.controllers);
+    }
+
+    if (dynamic?.exports != undefined)
+    {
+      moduleObject.exports?.push(...dynamic.exports);
+    }
+
+    if (importsMeta.imports != undefined)
+    {
+      moduleObject.imports?.push(...importsMeta.imports);
+    }
+
+    if (providersMeta.providers != undefined)
+    {
+      moduleObject.providers?.push(...providersMeta.providers);
+    }
+
+    if (controllersMeta.controllers != undefined)
+    {
+      moduleObject.controllers?.push(...controllersMeta.controllers);
+    }
+
+    if (exportsMeta.exports != undefined)
+    {
+      moduleObject.exports?.push(...exportsMeta.exports);
+    }
 
     return moduleObject;
   }

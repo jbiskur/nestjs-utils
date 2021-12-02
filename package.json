@@ -38,14 +38,16 @@
     "@golevelup/nestjs-discovery": "^2.3.1",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
-    "@nestjs/testing": "8.0.0",
     "@nestjs/microservices": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
+    "@nestjs/testing": "8.0.0",
+    "@types/lodash": "^4.14.177",
     "cross-fetch": "3.0.6",
     "nanoid": "^3.1.25",
     "reflect-metadata": "0.1.12",
-    "rxjs": "^7.0.0"
+    "rxjs": "^7.0.0",
+    "tslib": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.9.6",

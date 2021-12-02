@@ -83,7 +83,7 @@ export class NestApplicationBuilder<
 
   with<T extends INestApplicationBuilderPlugin>(
     plugin: { new (): T },
-    pluginBuilder: (builder: T) => T = null
+    pluginBuilder?: (builder: T) => T
   ): this {
     if (pluginBuilder) {
       const pluginInstance = pluginBuilder(new plugin());
