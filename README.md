@@ -40,13 +40,13 @@ The async module is a simple utility class that helps create dynamic modules
 install using npm
 
 ```npm
-npm install --save-dev @jbiskur/nestjs-async-module
+npm install @jbiskur/nestjs-async-module
 ```
 
 or using yarn
 
 ```npm
-yarn add --dev @jbiskur/nestjs-async-module
+yarn add @jbiskur/nestjs-async-module
 ```
 
 more info [here](./packages/nestjs-async-module/README.md)
@@ -58,13 +58,13 @@ The options module factory allows passing options to modules imported into the c
 install using npm
 
 ```npm
-npm install --save-dev @jbiskur/nestjs-options-module-factory
+npm install @jbiskur/nestjs-options-module-factory @jbiskur/nestjs-async-module
 ```
 
 or using yarn
 
 ```npm
-yarn add --dev @jbiskur/nestjs-options-module-factory
+yarn add @jbiskur/nestjs-options-module-factory @jbiskur/nestjs-async-module
 ```
 
 more info [here](./packages/nestjs-options-module-factory/README.md)

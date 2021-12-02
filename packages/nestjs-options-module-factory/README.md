@@ -12,13 +12,13 @@ The Options Module Factory provides a way to pass an options provider in the cur
 Install using npm.
 
 ```npm
-npm install --save-dev @jbiskur/nestjs-options-module-factory
+npm install --save @jbiskur/nestjs-options-module-factory @jbiskur/nestjs-async-module
 ```
 
 using yarn.
 
 ```yarn
-yarn add --dev @jbiskur/nestjs-options-module-factory
+yarn add @jbiskur/nestjs-options-module-factory @jbiskur/nestjs-async-module
 ```
 
 ## Usage
