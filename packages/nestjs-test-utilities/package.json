@@ -5,5 +5,8 @@
     "url": "https://github.com/jbiskur/nestjs-utils.git",
     "directory": "packages/nestjs-test-utilities"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "peerDependencies": {
+    "@nestjs/testing": "^8.0.0"
+  }
 }
