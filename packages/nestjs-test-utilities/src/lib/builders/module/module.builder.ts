@@ -27,15 +27,15 @@ export class TestModuleBuilder implements ITestModuleBuilder {
   private rootProviders: Provider<unknown>[] = [];
 
   build(): TestingModuleBuilder {
-    @Global()
-    @Module({
-      providers: [...this.providers],
-      exports: [...this.providers],
-    })
     class TestModuleInjector {}
 
     return Test.createTestingModule({
-      imports: [...this.imports, TestModuleInjector],
+      imports: [...this.imports, {
+        module: TestModuleInjector,
+        providers: [...this.providers],
+        exports: [...this.providers],
+        global: true
+      }],
       providers: [...this.rootProviders],
     });
   }
