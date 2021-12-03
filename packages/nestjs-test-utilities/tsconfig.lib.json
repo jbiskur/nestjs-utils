@@ -4,8 +4,8 @@
     "module": "commonjs",
     "outDir": "../../dist/out-tsc",
     "declaration": true,
-    "importHelpers": true,
-    "target": "es5"
+    "types": ["node"],
+    "target": "es6"
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts"],
   "include": ["**/*.ts"]
