@@ -7,6 +7,6 @@
   },
   "license": "MIT",
   "peerDependencies": {
-    "@nestjs/testing": "^8.0.0"
+    "@nestjs/testing": "^8.4.6"
   }
 }
