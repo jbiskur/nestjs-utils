@@ -3,9 +3,18 @@ import { INestApplication } from "@nestjs/common";
 import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
 import { MicroserviceOptions } from "@nestjs/microservices";
 
+export enum ProviderType {
+  PROVIDER = "overrideProvider",
+  GUARD = "overrideGuard",
+  INTERCEPTOR = "overrideInterceptor",
+  FILTER = "overrideFilter",
+  PIPE = "overridePipe",
+}
+
 type OverrideProvider = {
   type: unknown;
   override: ApplicationBuilderOverrideBy;
+  providerType: ProviderType
 };
 
 export interface INestApplicationBuilderPlugin {
@@ -49,7 +58,7 @@ export class NestApplicationBuilder<
 
     // loop through all override providers and apply them to the testing module
     this.overrideProviders.forEach((overrideProvider: OverrideProvider) => {
-      const provider = testingModuleBuilder.overrideProvider(
+      const provider = testingModuleBuilder[overrideProvider.providerType](
         overrideProvider.type
       );
 
@@ -58,6 +67,7 @@ export class NestApplicationBuilder<
         overrideProvider.override.overriddenWith(provider);
       }
     });
+
     return testingModuleBuilder;
   }
 
@@ -65,11 +75,13 @@ export class NestApplicationBuilder<
     typeOrToken: T,
     overrideBy: (
       overrideWith: ApplicationBuilderOverrideBy
-    ) => ApplicationBuilderOverrideBy
+    ) => ApplicationBuilderOverrideBy,
+    providerType: ProviderType = ProviderType.PROVIDER
   ): this {
     this.overrideProviders.push({
       type: typeOrToken,
       override: overrideBy(new ApplicationBuilderOverrideBy()),
+      providerType,
     });
     return this;
   }
