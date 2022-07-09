@@ -29,12 +29,12 @@
     "workspace-generator": "nx workspace-generator"
   },
   "peerDependencies": {
-    "@nestjs/common": "^8.4.6",
-    "@nestjs/core": "^8.4.6",
-    "@nestjs/microservices": "^8.4.5",
-    "@nestjs/platform-express": "^8.4.5",
-    "@nestjs/schematics": "^8.0.11",
-    "@nestjs/testing": "^8.4.6"
+    "@nestjs/common": "^8.4.5 || ^9.0.0",
+    "@nestjs/core": "^8.4.5 || ^9.0.0",
+    "@nestjs/microservices": "^8.4.5 || ^9.0.0",
+    "@nestjs/platform-express": "^8.4.5 || ^9.0.0",
+    "@nestjs/schematics": "^8.0.11 || ^9.0.0",
+    "@nestjs/testing": "^8.4.6 || ^9.0.0"
   },
   "dependencies": {
     "@golevelup/nestjs-discovery": "3.0.0",
@@ -52,12 +52,12 @@
     "@babel/preset-env": "7.9.6",
     "@babel/preset-react": "7.9.4",
     "@babel/preset-typescript": "7.9.0",
-    "@nestjs/common": "8.4.6",
-    "@nestjs/core": "8.4.6",
-    "@nestjs/microservices": "8.4.5",
-    "@nestjs/platform-express": "8.4.5",
-    "@nestjs/schematics": "8.0.11",
-    "@nestjs/testing": "8.4.6",
+    "@nestjs/common": "9.0.1",
+    "@nestjs/core": "9.0.1",
+    "@nestjs/microservices": "9.0.1",
+    "@nestjs/platform-express": "9.0.1",
+    "@nestjs/schematics": "9.0.1",
+    "@nestjs/testing": "9.0.1",
     "@nrwl/cli": "13.2.3",
     "@nrwl/eslint-plugin-nx": "13.2.3",
     "@nrwl/jest": "13.2.3",
