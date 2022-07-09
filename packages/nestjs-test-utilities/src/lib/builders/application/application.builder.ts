@@ -48,7 +48,7 @@ export class NestApplicationBuilder<
       ...testingModule,
       ...options,
     });
-    await app.listenAsync();
+    await app.listen();
     console.log("microservice is listening");
     return app;
   }
