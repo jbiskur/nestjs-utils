@@ -432,3 +432,16 @@ commandInstance = await new GTCommandInstanceBuilder()
   )
   .buildCommandInstance();
 ```
+
+### Injecting
+
+The test utilities has the ability to inject modules and providers into other modules during the build process. This is useful for testing modules that depend on other modules or injecting mocked modules and providers.
+
+```typescript
+//...
+        app = await new NestApplicationBuilder()
+        .withTestModule((builder) => builder.withModule(TestModuleA))
+          .injectImports(TestModuleA, [SomeModuleB.forRoot({ /* some options */})])
+        .build();
+//...
+```

@@ -1,5 +1,5 @@
-import { ITestModuleBuilder, TestModuleBuilder } from "../module";
-import { INestApplication } from "@nestjs/common";
+import { ITestModuleBuilder, NestJSModule, TestModuleBuilder } from "../module";
+import { INestApplication, Provider, Type } from "@nestjs/common";
 import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
 import { MicroserviceOptions } from "@nestjs/microservices";
 
@@ -90,6 +90,16 @@ export class NestApplicationBuilder<
     testModuleBuilder: (builder: ITestModuleBuilder) => ITestModuleBuilder
   ): this {
     this.testModuleBuilder = testModuleBuilder(this.testModuleBuilder);
+    return this;
+  }
+
+  injectImports(targetModule: Type, imports: NestJSModule[]): this {
+    this.testModuleBuilder.injectImports(targetModule, imports);
+    return this;
+  }
+
+  injectProviders(targetModule: Type, providers: Provider[]): this {
+    this.testModuleBuilder.injectProviders(targetModule, providers);
     return this;
   }
 

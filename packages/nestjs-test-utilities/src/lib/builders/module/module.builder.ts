@@ -19,6 +19,8 @@ export interface ITestModuleBuilder {
   withModule(nestModule: NestJSModule): ITestModuleBuilder;
   withProvider(provider: Provider<unknown>): ITestModuleBuilder;
   withRootProvider(provider: Provider<unknown>): ITestModuleBuilder;
+  injectImports(target: Type, imports: NestJSModule[]): ITestModuleBuilder;
+  injectProviders(target: Type, imports: Provider[]): ITestModuleBuilder;
 }
 
 export class TestModuleBuilder implements ITestModuleBuilder {
@@ -40,8 +42,29 @@ export class TestModuleBuilder implements ITestModuleBuilder {
     });
   }
 
+
   withModule(nestModule: NestJSModule): this {
     this.imports.push(nestModule);
+    return this;
+  }
+
+  injectImports(targetModule: Type, imports: NestJSModule[]): this {
+    const module = this.imports.find((m) => m["name"] === targetModule.name);
+    if (module["imports"]) {
+      module["imports"] = [...module["imports"], ...imports];
+    } else {
+      module["imports"] = [...imports];
+    }
+    return this;
+  }
+
+  injectProviders(targetModule: Type, providers: Provider[]): this {
+    const module = this.imports.find((m) => m["name"] === targetModule.name);
+    if (module["providers"]) {
+      module["providers"] = [...module["providers"], ...providers];
+    } else {
+      module["providers"] = [...providers];
+    }
     return this;
   }
 
