@@ -72,7 +72,7 @@ export abstract class AsyncModule {
     const moduleObject: DynamicModule = {
       module,
       imports: (options && options?.imports) || [],
-      providers: [...optionsProvider, ...(includeDynamicOptions && [ModuleOptions])],
+      providers: [...optionsProvider, ...(includeDynamicOptions ? [ModuleOptions] : [])],
       controllers: [],
       exports: [],
     };
