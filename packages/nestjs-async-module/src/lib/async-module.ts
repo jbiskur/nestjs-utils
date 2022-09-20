@@ -56,7 +56,8 @@ export abstract class AsyncModule {
       AsyncOptions<TOptions>,
       "imports" | "useFactory" | "inject"
     > | null = null,
-    dynamic: ModuleMetadata = null
+    dynamic: ModuleMetadata = null,
+    includeDynamicOptions = true,
   ): DynamicModule {
     const optionsProvider: Provider[] = [];
 
@@ -71,7 +72,7 @@ export abstract class AsyncModule {
     const moduleObject: DynamicModule = {
       module,
       imports: (options && options?.imports) || [],
-      providers: [...optionsProvider, ModuleOptions],
+      providers: [...optionsProvider, ...(includeDynamicOptions && [ModuleOptions])],
       controllers: [],
       exports: [],
     };
