@@ -13,7 +13,8 @@ class OptionsModule<T> extends AsyncModule {
 
 export function createOptionsModule<T>(
   optionsName: string,
-  options: AsyncOptions<T>
+  options: AsyncOptions<T>,
+  dynamicOptions = true,
 ) {
-  return new OptionsModule<T>().create(optionsName, options);
+  return new OptionsModule<T>().create(optionsName, options, dynamicOptions);
 }
