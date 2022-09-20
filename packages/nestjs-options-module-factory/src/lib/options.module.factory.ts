@@ -3,9 +3,9 @@ import { AsyncModule, AsyncOptions } from "@jbiskur/nestjs-async-module";
 
 @Module({})
 class OptionsModule<T> extends AsyncModule {
-  public create(optionsName: string, options: AsyncOptions<T>) {
+  public create(optionsName: string, options: AsyncOptions<T>, dynamicOptions = true) {
     return {
-      ...OptionsModule.doRegisterAsync(OptionsModule, optionsName, options),
+      ...OptionsModule.doRegisterAsync(OptionsModule, optionsName, options, undefined, dynamicOptions),
       exports: [optionsName],
     };
   }
