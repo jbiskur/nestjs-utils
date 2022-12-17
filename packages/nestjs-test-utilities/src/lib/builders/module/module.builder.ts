@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   DynamicModule,
   ForwardReference,
-  Global,
-  Module,
   Provider,
   Type,
 } from "@nestjs/common";
@@ -49,7 +48,11 @@ export class TestModuleBuilder implements ITestModuleBuilder {
   }
 
   injectImports(targetModule: Type, imports: NestJSModule[]): this {
-    const module = this.imports.find((m) => m["name"] === targetModule.name);
+    const module = this.imports.find((m : any) => m["name"] === targetModule.name) as any;
+    if (!module) {
+      return this;
+    }
+
     if (module["imports"]) {
       module["imports"] = [...module["imports"], ...imports];
     } else {
@@ -59,7 +62,11 @@ export class TestModuleBuilder implements ITestModuleBuilder {
   }
 
   injectProviders(targetModule: Type, providers: Provider[]): this {
-    const module = this.imports.find((m) => m["name"] === targetModule.name);
+    const module = this.imports.find((m: any) => m["name"] === targetModule.name) as any;
+    if (!module) {
+      return this;
+    }
+
     if (module["providers"]) {
       module["providers"] = [...module["providers"], ...providers];
     } else {

@@ -7,5 +7,5 @@ export interface AsyncOptions<TOptions>
   extends Pick<ModuleMetadata, "imports"> {
   inject?: any[];
   useClass?: Type<OptionsFactory<TOptions>>;
-  useFactory?: (...args: unknown[]) => Promise<TOptions> | TOptions;
+  useFactory?: (...args: any[]) => Promise<TOptions> | TOptions;
 }

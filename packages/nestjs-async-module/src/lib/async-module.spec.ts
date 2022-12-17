@@ -55,7 +55,7 @@ async function TestOptionsReturnMessage(app: INestApplication) {
 }
 
 describe("Simple Async Module", () => {
-  let dynamicModule;
+  let dynamicModule: ExampleAsyncModule;
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -109,7 +109,7 @@ class ExampleMetadataAsyncModule extends AsyncModule {
 }
 
 describe("Simple Async module using metadata and doRegisterAsync", () => {
-  let dynamicModule;
+  let dynamicModule: ExampleAsyncModule;
   let app: INestApplication;
   let controller: TestController;
   let extraModule: TestModuleA;

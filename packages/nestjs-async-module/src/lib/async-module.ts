@@ -28,12 +28,12 @@ export interface IAsyncModule<TOptions, COptions = unknown> {
 }
 
 export const createAsyncModule = <TOptions = unknown>(
-  optionsProviderName: string = null
+  optionsProviderName: string | null = null
 ) => {
   abstract class AsyncModuleDynamic extends AsyncModule {
     public static registerAsync(
       options: AsyncOptions<TOptions>,
-      type?: Type
+      type: Type
     ): DynamicModule {
       return this.doRegisterAsync(
         type,
@@ -51,17 +51,17 @@ export abstract class AsyncModule {
   protected static doRegisterAsync<TOptions>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     module: Type<any>,
-    constProviderName: string = null,
+    constProviderName: string | null = null,
     options: Pick<
       AsyncOptions<TOptions>,
       "imports" | "useFactory" | "inject"
     > | null = null,
-    dynamic: ModuleMetadata = null,
+    dynamic: ModuleMetadata | null = null,
     includeDynamicOptions = true,
   ): DynamicModule {
     const optionsProvider: Provider[] = [];
 
-    if (options && options.useFactory) {
+    if (options && options.useFactory && constProviderName) {
       optionsProvider.push({
         provide: constProviderName,
         useFactory: options.useFactory,

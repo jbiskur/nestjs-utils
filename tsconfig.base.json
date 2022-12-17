@@ -14,6 +14,7 @@
     "typeRoots": ["node_modules/@types"],
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
+    "strict": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
