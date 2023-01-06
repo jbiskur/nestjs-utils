@@ -1,4 +1,4 @@
-import { INestApplication, INestMicroservice } from "@nestjs/common";
+import {INestApplication, INestMicroservice, Injectable, Module} from "@nestjs/common";
 import {
   INestApplicationBuilderPlugin,
   NestApplicationBuilder,
@@ -85,6 +85,49 @@ describe("Application Builder", () => {
 
       const sut = await app.resolve(TestServiceA);
       expect(sut.helloFromA()).toBe(mockedOutput);
+    });
+
+    it("should work to override a module", async () => {
+      @Injectable()
+      class OGService {
+        hello() {
+          return "hello";
+        }
+      }
+
+      @Module({
+        providers: [OGService],
+      })
+      class OGModule {}
+
+      @Injectable()
+      class MockService {
+        hello() {
+          return mockedOutput;
+        }
+      }
+
+      @Module({
+        providers: [{
+          provide: OGService,
+          useClass: MockService,
+        }],
+      })
+      class MockModule {}
+
+
+      @Module({
+        imports: [OGModule],
+      })
+      class AppModule {}
+
+      app = await new NestApplicationBuilder()
+        .withTestModule((builder) => builder.withModule(AppModule))
+        .overrideModule(AppModule, OGModule, MockModule)
+        .build();
+
+      const sut = await app.resolve(OGService);
+      expect(sut.hello()).toBe(mockedOutput);
     });
   });
 
