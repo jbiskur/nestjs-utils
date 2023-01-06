@@ -454,7 +454,7 @@ The test utilities has the ability to override modules during the build process.
 //...
         app = await new NestApplicationBuilder()
         .withTestModule((builder) => builder.withModule(TestModuleA))
-          .overrideModule(TestModuleA, ModuleToOverride, MockedModule)
+        .overrideModule(TestModuleA, ModuleToOverride, MockedModule)
         .build();
 //...
 ```
