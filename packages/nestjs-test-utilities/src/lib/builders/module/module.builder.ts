@@ -21,6 +21,7 @@ export interface ITestModuleBuilder {
   withRootProvider(provider: Provider<unknown>): ITestModuleBuilder;
   injectImports(target: Type, imports: NestJSModule[]): ITestModuleBuilder;
   injectProviders(target: Type, imports: Provider[]): ITestModuleBuilder;
+  overrideModule(testModule: Type | string, target: Type, nestModule: NestJSModule): ITestModuleBuilder;
 }
 
 export class TestModuleBuilder implements ITestModuleBuilder {

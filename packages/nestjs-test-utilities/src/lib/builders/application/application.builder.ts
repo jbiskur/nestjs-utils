@@ -103,6 +103,11 @@ export class NestApplicationBuilder<
     return this;
   }
 
+  overrideModule(parentModule: Type | string, targetModule: Type, module: NestJSModule): this {
+    this.testModuleBuilder.overrideModule(parentModule, targetModule, module);
+    return this;
+  }
+
   with<T extends INestApplicationBuilderPlugin>(
     plugin: { new (): T },
     pluginBuilder?: (builder: T) => T
