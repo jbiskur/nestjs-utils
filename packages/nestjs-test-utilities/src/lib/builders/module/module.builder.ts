@@ -6,6 +6,7 @@ import {
   Type,
 } from "@nestjs/common";
 import { Test, TestingModuleBuilder } from "@nestjs/testing";
+import * as _ from "lodash";
 
 export type NestJSModule =
   | Type<unknown>
@@ -44,6 +45,22 @@ export class TestModuleBuilder implements ITestModuleBuilder {
 
   withModule(nestModule: NestJSModule): this {
     this.imports.push(nestModule);
+    return this;
+  }
+
+  overrideModule(testModule: Type | string, target: Type, nestModule: NestJSModule): this {
+    const index = this.imports.findIndex((m: any) => {
+      return m["name"] === (_.isString(testModule) ? testModule : testModule.name);
+    });
+    if (index > -1) {
+      const module = this.imports[index] as NestJSModule;
+      const imports = Reflect.getMetadata("imports", module);
+
+      const targetIndex = imports.findIndex((m: any) => m["name"] === target.name);
+      if (targetIndex > -1) {
+        Reflect.defineMetadata("imports", [...imports.slice(0, targetIndex), nestModule, ...imports.slice(targetIndex + 1)], module);
+      }
+    }
     return this;
   }
 

@@ -445,3 +445,16 @@ The test utilities has the ability to inject modules and providers into other mo
         .build();
 //...
 ```
+
+### Override Module
+
+The test utilities has the ability to override modules during the build process. This is useful for testing modules that depend on other modules or injecting mocked modules and providers.
+
+```typescript
+//...
+        app = await new NestApplicationBuilder()
+        .withTestModule((builder) => builder.withModule(TestModuleA))
+          .overrideModule(TestModuleA, ModuleToOverride, MockedModule)
+        .build();
+//...
+```

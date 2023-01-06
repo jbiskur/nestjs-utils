@@ -6,7 +6,7 @@ import {
   TestServiceA,
   TestServiceB,
 } from "../test-data/test-service.data";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Module } from "@nestjs/common";
 
 @Injectable()
 class TestServiceC {}
@@ -42,5 +42,50 @@ describe("Module Builder", () => {
     expect(await serviceB.helloFromB()).toBe(SERVICE_B_RESPONSE);
 
     expect(serviceC).toBeDefined();
+  });
+
+  it("should be able to override a module", async () => {
+    @Injectable()
+    class OGService {
+      hello() {
+        return "hello";
+      }
+    }
+
+    @Module({
+      providers: [OGService],
+    })
+    class OGModule {}
+
+    @Injectable()
+    class MockService {
+      hello() {
+        return "mocked hello";
+      }
+    }
+
+    @Module({
+      providers: [{
+        provide: OGService,
+        useClass: MockService,
+      }],
+    })
+    class MockModule {}
+
+
+    @Module({
+      imports: [OGModule],
+    })
+    class AppModule {}
+
+    const module = await new TestModuleBuilder()
+      .withModule(AppModule)
+      .overrideModule(AppModule, OGModule, MockModule)
+      .build()
+      .compile();
+
+    const service = module.get(OGService);
+
+    expect(await service.hello()).toBe("mocked hello");
   });
 });
