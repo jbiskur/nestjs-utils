@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  DynamicModule,
-  ForwardReference,
-  Provider,
   Type,
+  Provider,
+  DynamicModule,
+  NotImplementedException,
 } from "@nestjs/common";
 import { Test, TestingModuleBuilder } from "@nestjs/testing";
 import * as _ from "lodash";
@@ -11,8 +11,6 @@ import * as _ from "lodash";
 export type NestJSModule =
   | Type<unknown>
   | DynamicModule
-  | Promise<DynamicModule>
-  | ForwardReference<unknown>;
 
 export interface ITestModuleBuilder {
   build(): TestingModuleBuilder | Promise<TestingModuleBuilder>;
@@ -57,15 +55,16 @@ export class TestModuleBuilder implements ITestModuleBuilder {
       const module = this.imports[index] as NestJSModule;
       const imports = Reflect.getMetadata("imports", module);
 
-      const targetIndex = imports.findIndex((m) => {
-        if (typeof m === "function") {
-          return m["name"] === target.name
-        } else if (typeof m === "object") {
-          const innerModule = m.module
+      const targetIndex = imports.findIndex((nestModule: NestJSModule ) => {
+        if (typeof nestModule === "function") {
+          return nestModule["name"] === target.name
+        } else if (typeof nestModule === "object") {
+          const innerModule: NestJSModule = nestModule.module
           return innerModule ? innerModule["name"] === target.name : false
         } else {
-          // NOT SUPPORTED
-          return false
+          throw new NotImplementedException(
+            `${typeof nestModule} is not supported by overrideModule`
+          );
         }
       });
       if (targetIndex > -1) {
