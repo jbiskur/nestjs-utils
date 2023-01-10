@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  Type,
+  Provider,
   DynamicModule,
   ForwardReference,
-  Provider,
-  Type,
+  NotImplementedException
 } from "@nestjs/common";
 import { Test, TestingModuleBuilder } from "@nestjs/testing";
 import * as _ from "lodash";
@@ -57,7 +58,18 @@ export class TestModuleBuilder implements ITestModuleBuilder {
       const module = this.imports[index] as NestJSModule;
       const imports = Reflect.getMetadata("imports", module);
 
-      const targetIndex = imports.findIndex((m: any) => m["name"] === target.name);
+      const targetIndex = imports.findIndex((m: any) => {
+        if (typeof m === "function") {
+          return m["name"] === target.name
+        } else if (typeof m === "object") {
+          const innerModule = m.module
+          return innerModule ? innerModule["name"] === target.name : false
+        } else {
+          throw new NotImplementedException(
+            `${typeof m} is not supported by overrideModule`
+          );
+        }
+      });
       if (targetIndex > -1) {
         Reflect.defineMetadata("imports", [...imports.slice(0, targetIndex), nestModule, ...imports.slice(targetIndex + 1)], module);
       }
