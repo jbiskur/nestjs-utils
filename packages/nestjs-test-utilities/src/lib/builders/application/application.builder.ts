@@ -23,6 +23,8 @@ export interface INestApplicationBuilderPlugin {
   run(appBuilder: NestApplicationBuilder): void;
 }
 
+let nextPort = 3000;
+
 export class NestApplicationBuilder<
   T extends ITestModuleBuilder = TestModuleBuilder
 > {
@@ -42,7 +44,7 @@ export class NestApplicationBuilder<
     return app;
   }
 
-  async buildAsMicroservice(options: MicroserviceOptions | MicroserviceOptions[]): Promise<INestApplication> {
+  async buildAsMicroservice(options: MicroserviceOptions | MicroserviceOptions[], port = nextPort): Promise<INestApplication> {
     const testingModuleBuilder = await this.createTestingModule();
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestApplication();
@@ -58,6 +60,10 @@ export class NestApplicationBuilder<
 
     await app.startAllMicroservices();
     console.log("microservice is listening");
+    await app.listen(port, () => {
+      console.log(`listening on port ${port}`);
+    });
+    nextPort++;
     return app;
   }
 
