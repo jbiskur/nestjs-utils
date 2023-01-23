@@ -2,16 +2,21 @@
 
 The test utilities contain a set of builders that should speed up testing using method chaining and make the tests more descriptive.
 
-[toc]: # "## Table of Contents"
-
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Module](#module)
-  - [Application](#application)
-  - [Application Instance](#application-instance)
-  - [Plugins](#plugins)
+<!-- TOC -->
+* [nestjs-test-utilities](#nestjs-test-utilities)
+  * [Table of Contents](#table-of-contents)
+  * [Installation](#installation)
+  * [Usage](#usage)
+    * [Module](#module)
+    * [Application](#application)
+    * [Application Instance](#application-instance)
+    * [Plugins](#plugins)
+    * [Injecting](#injecting)
+    * [Override Module](#override-module)
+    * [Build As Microservice](#build-as-microservice)
+<!-- TOC -->
 
 ## Installation
 
@@ -458,3 +463,23 @@ The test utilities has the ability to override modules during the build process.
         .build();
 //...
 ```
+
+### Build As Microservice
+
+The test utilities has the ability to build the application as a microservice. This is useful for testing microservices.
+
+```typescript
+//...
+        app = await new NestApplicationBuilder()
+        .withTestModule((builder) => builder.withModule(TestModuleA))
+        .buildAsMicroservice({
+          transport: Transport.TCP,
+          options: {
+            host: 'localhost',
+            port: 3000,
+          },
+        });
+//...
+```
+
+> The `buildAsMicroservice` method returns a `Promise<INestMicroservice>` and supports multiple microservice configurations by providing an array of `MicroserviceOptions` to the method.
