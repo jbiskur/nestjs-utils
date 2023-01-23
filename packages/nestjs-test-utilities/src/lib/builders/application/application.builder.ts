@@ -2,6 +2,7 @@ import { ITestModuleBuilder, NestJSModule, TestModuleBuilder } from "../module";
 import { INestApplication, Provider, Type } from "@nestjs/common";
 import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
 import { MicroserviceOptions } from "@nestjs/microservices";
+import * as _ from "lodash";
 
 export enum ProviderType {
   PROVIDER = "overrideProvider",
@@ -41,12 +42,15 @@ export class NestApplicationBuilder<
     return app;
   }
 
-  async buildAsMicroservice(options: MicroserviceOptions) {
+  async buildAsMicroservice(options: MicroserviceOptions | MicroserviceOptions[]) {
     const testingModuleBuilder = await this.createTestingModule();
     const testingModule = await testingModuleBuilder.compile();
-    const app = testingModule.createNestMicroservice<MicroserviceOptions>({
+    const app = testingModule.createNestMicroservice(_.isArray(options) ? options.map(option => ({
       ...testingModule,
-      ...options,
+      ...option
+    })) : {
+      ...testingModule,
+      ...options
     });
     await app.listen();
     console.log("microservice is listening");
