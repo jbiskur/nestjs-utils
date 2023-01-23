@@ -42,17 +42,21 @@ export class NestApplicationBuilder<
     return app;
   }
 
-  async buildAsMicroservice(options: MicroserviceOptions | MicroserviceOptions[]) {
+  async buildAsMicroservice(options: MicroserviceOptions | MicroserviceOptions[]): Promise<INestApplication> {
     const testingModuleBuilder = await this.createTestingModule();
     const testingModule = await testingModuleBuilder.compile();
-    const app = testingModule.createNestMicroservice(_.isArray(options) ? options.map(option => ({
-      ...testingModule,
-      ...option
-    })) : {
-      ...testingModule,
-      ...options
-    });
-    await app.listen();
+    const app = testingModule.createNestApplication();
+
+    if (_.isArray(options)) {
+      for (const option of options) {
+        app.connectMicroservice(option);
+      }
+    }
+    else {
+      app.connectMicroservice(options);
+    }
+
+    await app.startAllMicroservices();
     console.log("microservice is listening");
     return app;
   }

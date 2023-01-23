@@ -203,7 +203,7 @@ describe("Application Builder", () => {
 });
 
 describe("should work to build as microservice", () => {
-  let microservice: INestMicroservice;
+  let microservice: INestApplication;
   let app: INestApplication;
 
   beforeAll(async () => {
