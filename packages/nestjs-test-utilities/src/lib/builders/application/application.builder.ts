@@ -23,7 +23,7 @@ export interface INestApplicationBuilderPlugin {
   run(appBuilder: NestApplicationBuilder): void;
 }
 
-let nextPort = 3000;
+let nextPort = 3900;
 
 export class NestApplicationBuilder<
   T extends ITestModuleBuilder = TestModuleBuilder
