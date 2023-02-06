@@ -1,8 +1,9 @@
-import { ITestModuleBuilder, NestJSModule, TestModuleBuilder } from "../module";
-import { INestApplication, Provider, Type } from "@nestjs/common";
-import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
-import { MicroserviceOptions } from "@nestjs/microservices";
+import {ITestModuleBuilder, NestJSModule, TestModuleBuilder} from "../module";
+import {INestApplication, Provider, Type} from "@nestjs/common";
+import {ApplicationBuilderOverrideBy} from "./application-builder-override-by";
+import {MicroserviceOptions} from "@nestjs/microservices";
 import * as _ from "lodash";
+import * as net from "net";
 
 export enum ProviderType {
   PROVIDER = "overrideProvider",
@@ -60,11 +61,41 @@ export class NestApplicationBuilder<
 
     await app.startAllMicroservices();
     console.log("microservice is listening");
+    while (await this.isPortUsed(port)) {
+      console.log(`port: ${port} is used, trying next port`);
+      port++;
+    }
     await app.listen(port, () => {
       console.log(`listening on port ${port}`);
     });
     nextPort++;
     return app;
+  }
+
+  private async isPortUsed(port: number): Promise<boolean> {
+    const server = net.createServer();
+    try {
+      return await new Promise((resolve, reject) => {
+
+        server.once('error', function (err: any) {
+          if (err.code === 'EADDRINUSE') {
+            resolve(true);
+          }
+          reject(err);
+        });
+
+        server.once('listening', function () {
+          // close the server if listening doesn't fail
+          server.close();
+          resolve(false);
+        });
+
+        server.listen(port);
+      });
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 
   protected async createTestingModule() {
