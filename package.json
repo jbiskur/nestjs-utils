@@ -29,8 +29,8 @@
     "workspace-generator": "nx workspace-generator"
   },
   "peerDependencies": {
-    "@nestjs/common": "^8.4.5 || ^9.0.0",
-    "@nestjs/core": "^8.4.5 || ^9.0.0"
+    "@nestjs/common": "^8.4.5 || ^9.0.0 || ^10.0.0",
+    "@nestjs/core": "^8.4.5 || ^9.0.0 || ^10.0.0"
   },
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
