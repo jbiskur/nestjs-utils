@@ -1,7 +1,7 @@
 {
   "npmScope": "nestjs-utils",
   "affected": {
-    "defaultBase": "master"
+    "defaultBase": "main"
   },
   "tasksRunnerOptions": {
     "default": {

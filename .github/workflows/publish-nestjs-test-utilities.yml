@@ -32,13 +32,13 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Linting projects
-        run: yarn nx lint ${{ matrix.project }}
+        run: npx nx lint ${{ matrix.project }}
 
       - name: Testing projects
-        run: yarn nx test ${{ matrix.project }}
+        run: npx nx test ${{ matrix.project }}
 
       - name: Building projects
-        run: yarn nx build ${{ matrix.project }} --with-deps
+        run: npx nx build ${{ matrix.project }} --with-deps
 
       - name: Publish projects
         run: yarn publish --cwd ./dist/packages/${{ matrix.project }} --new-version ${{ github.event.release.tag_name }} --no-git-tag-version --access public --verbose
