@@ -1,5 +1,6 @@
 {
-  "root": "packages/nestjs-async-module",
+  "name": "nestjs-async-module",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nestjs-async-module/src",
   "projectType": "library",
   "generators": {},
@@ -12,15 +13,15 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "packages/nestjs-async-module/jest.config.js",
+        "jestConfig": "packages/nestjs-async-module/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/packages/nestjs-async-module"]
+      "outputs": ["{workspaceRoot}/coverage/packages/nestjs-async-module"]
     },
     "build": {
-      "executor": "@nrwl/node:package",
+      "executor": "@nrwl/js:tsc",
       "options": {
         "outputPath": "dist/packages/nestjs-async-module",
         "tsConfig": "packages/nestjs-async-module/tsconfig.lib.json",

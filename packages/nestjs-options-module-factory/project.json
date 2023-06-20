@@ -1,5 +1,6 @@
 {
-  "root": "packages/nestjs-options-module-factory",
+  "name": "nestjs-options-module-factory",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nestjs-options-module-factory/src",
   "projectType": "library",
   "generators": {},
@@ -12,15 +13,17 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "packages/nestjs-options-module-factory/jest.config.js",
+        "jestConfig": "packages/nestjs-options-module-factory/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/packages/nestjs-options-module-factory"]
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/nestjs-options-module-factory"
+      ]
     },
     "build": {
-      "executor": "@nrwl/node:package",
+      "executor": "@nrwl/js:tsc",
       "options": {
         "outputPath": "dist/packages/nestjs-options-module-factory",
         "tsConfig": "packages/nestjs-options-module-factory/tsconfig.lib.json",

@@ -1,19 +1,21 @@
 import { Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
 import { MetadataScanner, ModuleRef, ModulesContainer } from "@nestjs/core";
 import { DiscoveryService } from "@golevelup/nestjs-discovery";
-import { customAlphabet } from "nanoid";
+import {faker} from "@faker-js/faker";
 
-const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxy", 10);
 export const createOptionsToken = (token?: string) => {
   if (token) {
     return `${token.toUpperCase()}`;
   }
 
-  return `${nanoid().toUpperCase()}_OPTIONS`;
+  return `${faker.string.alpha({
+    length: 10,
+  }).toUpperCase()}_OPTIONS`;
 };
 
 @Injectable()
-export class ModuleOptions<TOptions> implements OnModuleInit {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export class ModuleOptions<TOptions extends {}> implements OnModuleInit {
   public options: TOptions = {} as TOptions;
   constructor(
     private readonly moduleRef: ModuleRef,

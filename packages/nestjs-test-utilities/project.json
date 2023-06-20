@@ -1,5 +1,6 @@
 {
-  "root": "packages/nestjs-test-utilities",
+  "name": "nestjs-test-utilities",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/nestjs-test-utilities/src",
   "projectType": "library",
   "generators": {},
@@ -12,15 +13,15 @@
       "outputs": ["{options.outputFile}"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "packages/nestjs-test-utilities/jest.config.js",
+        "jestConfig": "packages/nestjs-test-utilities/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/packages/nestjs-test-utilities"]
+      "outputs": ["{workspaceRoot}/coverage/packages/nestjs-test-utilities"]
     },
     "build": {
-      "executor": "@nrwl/node:package",
+      "executor": "@nrwl/js:tsc",
       "options": {
         "outputPath": "dist/packages/nestjs-test-utilities",
         "tsConfig": "packages/nestjs-test-utilities/tsconfig.lib.json",
@@ -31,7 +32,7 @@
       "outputs": ["{options.outputPath}"]
     },
     "publish": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "echo $GITHUB_REF",

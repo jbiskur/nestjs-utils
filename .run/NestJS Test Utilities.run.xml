@@ -2,7 +2,6 @@
   <configuration default="false" name="NestJS Test Utilities" type="JavaScriptTestRunnerJest">
     <config-file value="$PROJECT_DIR$/packages/nest-js-test-utilities/jest.config.js" />
     <node-interpreter value="project" />
-    <node-options value="" />
     <jest-package value="$PROJECT_DIR$/node_modules/jest" />
     <working-dir value="$PROJECT_DIR$/" />
     <jest-options value="--coverage --watch" />
@@ -11,9 +10,8 @@
     <method v="2" />
   </configuration>
   <configuration default="false" name="NestJS Test Utilities" type="JavaScriptTestRunnerJest">
-    <config-file value="$PROJECT_DIR$/packages/nestjs-test-utilities/jest.config.js" />
+    <config-file value="$PROJECT_DIR$/packages/nestjs-test-utilities/jest.config.ts" />
     <node-interpreter value="project" />
-    <node-options value="" />
     <jest-package value="$PROJECT_DIR$/node_modules/jest" />
     <working-dir value="$PROJECT_DIR$/" />
     <jest-options value="--coverage --watch" />

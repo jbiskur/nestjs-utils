@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "projects": {
-    "nestjs-async-module": "packages/nestjs-async-module",
-    "nestjs-options-module-factory": "packages/nestjs-options-module-factory",
-    "nestjs-test-utilities": "packages/nestjs-test-utilities"
-  }
-}
