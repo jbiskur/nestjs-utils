@@ -58,5 +58,3 @@ class TestModule extends AsyncModule {
   }
 }
 ```
-
-
