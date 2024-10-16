@@ -1,8 +1,7 @@
-import {INestApplication, INestMicroservice, Injectable, Module} from "@nestjs/common";
-import {
-  INestApplicationBuilderPlugin,
-  NestApplicationBuilder,
-} from "./application.builder";
+import { INestApplication, Injectable, Module } from "@nestjs/common";
+import { Transport } from "@nestjs/microservices";
+import supertest from "supertest";
+import { MicroserviceA, MicroserviceB } from "../test-data/";
 import {
   ExtendedModule,
   TestModuleA,
@@ -15,8 +14,11 @@ import {
   TestServiceA,
   TestServiceB,
 } from "../test-data/test-service.data";
-import { Transport } from "@nestjs/microservices";
-import { MicroserviceA, MicroserviceB } from "../test-data/";
+import {
+  INestApplicationBuilderPlugin,
+  NestApplicationBuilder,
+} from "./application.builder";
+import { GlobalInterceptor, TestModule } from "../test-data/global-intercepter";
 
 describe("Application Builder", () => {
   let app: INestApplication;
@@ -35,6 +37,19 @@ describe("Application Builder", () => {
 
     expect(testModuleA).toBeDefined();
     expect(testServiceA).toBeDefined();
+  });
+
+  it("should work with global interceptors", async () => {
+    const interceptor = new GlobalInterceptor();
+    app = await new NestApplicationBuilder()
+      .withTestModule((builder) => builder.withModule(TestModule))
+      .withGlobalInterceptors([interceptor])
+      .build();
+
+    const superTest = await supertest(app.getHttpServer()).get("/");
+
+    expect(superTest.text).toBe("hello world");
+    expect(interceptor.wasCalled()).toBe(true);
   });
 
   describe("With Overrides", () => {
@@ -205,10 +220,13 @@ describe("Application Builder", () => {
 describe("should work to build as microservice", () => {
   let microservice: INestApplication;
   let app: INestApplication;
+  let interceptor: GlobalInterceptor;
 
   beforeAll(async () => {
+    interceptor = new GlobalInterceptor();
     microservice = await new NestApplicationBuilder()
-      .withTestModule((builder) => builder.withModule(MicroserviceA))
+      .withTestModule((builder) => builder.withModule(MicroserviceA).withModule(TestModule))
+      .withGlobalInterceptors([interceptor])
       .buildAsMicroservice({
         transport: Transport.TCP,
       });
@@ -232,5 +250,12 @@ describe("should work to build as microservice", () => {
     const sut = await app.resolve(MicroserviceTestingService);
 
     expect(sut.sum([1, 2, 3, 4, 5])).toBe(15);
+  });
+
+  it("should work with global interceptors", async () => {
+    const superTest = await supertest(microservice.getHttpServer()).get("/");
+
+    expect(superTest.text).toBe("hello world");
+    expect(interceptor.wasCalled()).toBe(true);
   });
 });

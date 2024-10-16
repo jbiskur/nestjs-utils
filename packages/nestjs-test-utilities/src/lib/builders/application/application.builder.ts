@@ -96,7 +96,7 @@ export class NestApplicationBuilder<
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestApplication();
 
-    
+    this.augmentApp(app);
 
     if (_.isArray(options)) {
       for (const option of options) {
