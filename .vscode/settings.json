@@ -1,0 +1,6 @@
+{
+	"biome.enabled": false,
+	"conventionalCommits.scopes": [
+		"test-utilities"
+	]
+}

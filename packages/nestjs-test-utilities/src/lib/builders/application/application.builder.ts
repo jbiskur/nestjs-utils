@@ -1,9 +1,9 @@
-import {ITestModuleBuilder, NestJSModule, TestModuleBuilder} from "../module";
-import {INestApplication, Provider, Type} from "@nestjs/common";
-import {ApplicationBuilderOverrideBy} from "./application-builder-override-by";
-import {MicroserviceOptions} from "@nestjs/microservices";
+import { CanActivate, ExceptionFilter, INestApplication, NestInterceptor, PipeTransform, Provider, Type } from "@nestjs/common";
+import { MicroserviceOptions } from "@nestjs/microservices";
 import * as _ from "lodash";
 import * as net from "net";
+import { ITestModuleBuilder, NestJSModule, TestModuleBuilder } from "../module";
+import { ApplicationBuilderOverrideBy } from "./application-builder-override-by";
 
 export enum ProviderType {
   PROVIDER = "overrideProvider",
@@ -12,6 +12,7 @@ export enum ProviderType {
   FILTER = "overrideFilter",
   PIPE = "overridePipe",
 }
+
 
 type OverrideProvider = {
   type: unknown;
@@ -31,9 +32,33 @@ export class NestApplicationBuilder<
 > {
   protected testModuleBuilder: ITestModuleBuilder;
   protected overrideProviders: OverrideProvider[] = [];
+  protected globalPipes: PipeTransform[] = [];
+  protected globalGuards: CanActivate[] = [];
+  protected globalInterceptors: NestInterceptor[] = [];
+  protected globalFilters: ExceptionFilter[] = [];
 
   constructor(c?: new () => T) {
     this.testModuleBuilder = c ? new c() : new TestModuleBuilder();
+  }
+
+  withGlobalPipes(pipes: PipeTransform[]): this {
+    this.globalPipes = pipes;
+    return this;
+  }
+
+  withGlobalGuards(guards: CanActivate[]): this {
+    this.globalGuards = guards;
+    return this;
+  }
+
+  withGlobalInterceptors(interceptors: NestInterceptor[]): this {
+    this.globalInterceptors = interceptors;
+    return this;
+  }
+
+  withGlobalFilters(filters: ExceptionFilter[]): this {
+    this.globalFilters = filters;
+    return this;
   }
 
   async build(): Promise<INestApplication> {
@@ -41,14 +66,37 @@ export class NestApplicationBuilder<
 
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestApplication();
+
+    this.augmentApp(app);
+
     await app.init();
     return app;
+  }
+
+  private augmentApp(app: INestApplication<unknown>) {
+    for (const pipe of this.globalPipes) {
+      app.useGlobalPipes(pipe);
+    }
+
+    for (const guard of this.globalGuards) {
+      app.useGlobalGuards(guard);
+    }
+
+    for (const interceptor of this.globalInterceptors) {
+      app.useGlobalInterceptors(interceptor);
+    }
+
+    for (const filter of this.globalFilters) {
+      app.useGlobalFilters(filter);
+    }
   }
 
   async buildAsMicroservice(options: MicroserviceOptions | MicroserviceOptions[], port = nextPort): Promise<INestApplication> {
     const testingModuleBuilder = await this.createTestingModule();
     const testingModule = await testingModuleBuilder.compile();
     const app = testingModule.createNestApplication();
+
+    
 
     if (_.isArray(options)) {
       for (const option of options) {
