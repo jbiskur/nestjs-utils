@@ -15,8 +15,6 @@ export class GlobalInterceptor implements NestInterceptor {
 
 @Controller()
 export class TestController {
-  constructor() {}
-
   @Get()
   async getExample(): Promise<string> {
     return "hello world";
